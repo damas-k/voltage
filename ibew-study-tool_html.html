@@ -1,0 +1,2984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><base href="https://d16ilfvy4mv02r.cloudfront.net/workspaces/nOgJTaQ215ufUbMUz9IuxmyyyuVtyWbs/b1d63d15-6cc7-47b5-862e-e53e5f1a82de/files/">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Voltage — IBEW Study Tool by Damask Holdings</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --navy: #0a1628;
+    --navy-light: #0f1f3d;
+    --charcoal: #131c2e;
+    --card: #172035;
+    --card-hover: #1d2a45;
+    --border: #243050;
+    --border-light: #2d3a5a;
+    --gold: #c9a84c;
+    --gold-light: #e2c472;
+    --gold-dim: rgba(201,168,76,0.15);
+    --cream: #f5f0e8;
+    --muted: #6b7a99;
+    --muted-light: #8892aa;
+    --text: #dde3f0;
+    --success: #2e7d5e;
+    --success-light: #4ade80;
+    --error: #c0392b;
+    --error-light: #f87171;
+    --warning: #d97706;
+    --info: #2563eb;
+    --radius: 10px;
+    --radius-lg: 16px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.4);
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--navy);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--charcoal); }
+  ::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 3px; }
+
+  /* ─── VIEWS ─── */
+  .view { display: none; min-height: 100vh; }
+  .view.active { display: flex; flex-direction: column; }
+
+  /* ════════════════════════════
+     SPLASH / LOGIN SCREEN
+  ════════════════════════════ */
+  #view-login {
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(ellipse at 30% 20%, #1a2a4a 0%, var(--navy) 60%),
+                radial-gradient(ellipse at 70% 80%, #0d1f36 0%, transparent 50%);
+    position: relative;
+    overflow: hidden;
+  }
+
+  #view-login::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(201,168,76,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(201,168,76,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+  }
+
+  .login-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 52px 44px;
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+    box-shadow: var(--shadow), 0 0 80px rgba(201,168,76,0.05);
+    position: relative;
+    z-index: 1;
+  }
+
+  .brand-wordmark {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 32px;
+    opacity: 0.85;
+  }
+
+  .login-logo {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, var(--gold) 0%, #a07830 100%);
+    border-radius: 16px;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    box-shadow: 0 8px 32px rgba(201,168,76,0.3);
+  }
+
+  .login-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--cream);
+    letter-spacing: -0.02em;
+    margin-bottom: 6px;
+  }
+
+  .login-subtitle {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 36px;
+    line-height: 1.5;
+  }
+
+  .divider-text {
+    position: relative;
+    color: var(--muted);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    margin: 24px 0;
+  }
+  .divider-text::before, .divider-text::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 40%;
+    height: 1px;
+    background: var(--border);
+  }
+  .divider-text::before { left: 0; }
+  .divider-text::after { right: 0; }
+
+  .btn-google {
+    width: 100%;
+    padding: 13px 20px;
+    background: #fff;
+    color: #1a1a2e;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.2s;
+    box-shadow: var(--shadow-sm);
+  }
+  .btn-google:hover { background: #f1f3f4; transform: translateY(-1px); box-shadow: var(--shadow); }
+  .btn-google:active { transform: translateY(0); }
+
+  .google-icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+
+  .login-footer {
+    margin-top: 32px;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.02em;
+  }
+
+  /* ════════════════════════════
+     APP SHELL
+  ════════════════════════════ */
+  #view-app {
+    flex-direction: row;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 240px;
+    min-height: 100vh;
+    background: var(--charcoal);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    z-index: 100;
+    transition: transform 0.3s;
+  }
+
+  .sidebar-logo {
+    padding: 24px 20px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sidebar-brand {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--cream);
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .sidebar-brand-icon {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, var(--gold) 0%, #a07830 100%);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .sidebar-tagline {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-top: 4px;
+    margin-left: 42px;
+  }
+
+  .sidebar-nav {
+    flex: 1;
+    padding: 16px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    overflow-y: auto;
+  }
+
+  .nav-section-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 12px 8px 6px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--muted-light);
+    font-size: 13.5px;
+    font-weight: 500;
+    transition: all 0.15s;
+    border: 1px solid transparent;
+    user-select: none;
+  }
+  .nav-item:hover { background: var(--card); color: var(--text); }
+  .nav-item.active {
+    background: var(--gold-dim);
+    color: var(--gold);
+    border-color: rgba(201,168,76,0.2);
+  }
+  .nav-item .nav-icon { font-size: 16px; width: 20px; text-align: center; }
+
+  .sidebar-user {
+    padding: 16px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .user-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold) 0%, #a07830 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--navy);
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+  .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+  .user-info { flex: 1; min-width: 0; }
+  .user-name { font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .user-role { font-size: 11px; color: var(--muted); }
+
+  .btn-signout {
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 16px;
+    padding: 4px;
+    border-radius: 4px;
+    transition: color 0.2s;
+  }
+  .btn-signout:hover { color: var(--error-light); }
+
+  /* MAIN CONTENT */
+  .main-content {
+    flex: 1;
+    margin-left: 240px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .topbar {
+    background: var(--charcoal);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .topbar-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--cream);
+    letter-spacing: -0.01em;
+  }
+
+  .topbar-actions { display: flex; align-items: center; gap: 10px; }
+
+  .btn-hamburger {
+    display: none;
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 7px 10px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+
+  .page-inner {
+    flex: 1;
+    padding: 28px;
+    max-width: 1100px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  /* ─── PAGE SECTIONS ─── */
+  .page-section { display: none; }
+  .page-section.active { display: block; }
+
+  /* ════════════════════════════
+     COMPONENTS
+  ════════════════════════════ */
+
+  /* Buttons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 10px 18px;
+    border-radius: var(--radius);
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.18s;
+    white-space: nowrap;
+  }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+  .btn-primary { background: var(--gold); color: var(--navy); border-color: var(--gold); }
+  .btn-primary:hover:not(:disabled) { background: var(--gold-light); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(201,168,76,0.3); }
+  .btn-secondary { background: var(--card); color: var(--text); border-color: var(--border); }
+  .btn-secondary:hover:not(:disabled) { background: var(--card-hover); border-color: var(--border-light); }
+  .btn-ghost { background: none; color: var(--muted-light); border-color: transparent; }
+  .btn-ghost:hover:not(:disabled) { background: var(--card); color: var(--text); }
+  .btn-danger { background: rgba(192,57,43,0.15); color: var(--error-light); border-color: rgba(192,57,43,0.3); }
+  .btn-danger:hover:not(:disabled) { background: rgba(192,57,43,0.25); }
+  .btn-sm { padding: 7px 12px; font-size: 12.5px; }
+  .btn-lg { padding: 14px 28px; font-size: 15px; }
+  .btn-full { width: 100%; }
+  .btn-icon { padding: 8px; width: 36px; height: 36px; }
+
+  /* Cards */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .card-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--cream);
+    letter-spacing: -0.01em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Badges */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+  }
+  .badge-gold { background: var(--gold-dim); color: var(--gold); border: 1px solid rgba(201,168,76,0.25); }
+  .badge-blue { background: rgba(37,99,235,0.15); color: #60a5fa; border: 1px solid rgba(37,99,235,0.25); }
+  .badge-green { background: rgba(46,125,94,0.15); color: var(--success-light); border: 1px solid rgba(46,125,94,0.25); }
+  .badge-red { background: rgba(192,57,43,0.15); color: var(--error-light); border: 1px solid rgba(192,57,43,0.25); }
+  .badge-muted { background: rgba(107,122,153,0.15); color: var(--muted-light); border: 1px solid rgba(107,122,153,0.2); }
+
+  /* Section headers */
+  .section-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .section-title {
+    font-size: 21px;
+    font-weight: 700;
+    color: var(--cream);
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+  .section-desc {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* Grid layouts */
+  .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+
+  /* Stat cards */
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 18px 20px;
+  }
+  .stat-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .stat-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--cream);
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .stat-sub {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+  .stat-icon {
+    font-size: 20px;
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  /* ════════════════════════════
+     UPLOAD SECTION
+  ════════════════════════════ */
+  .drop-zone {
+    border: 2px dashed var(--border-light);
+    border-radius: var(--radius-lg);
+    padding: 48px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: rgba(201,168,76,0.02);
+    position: relative;
+  }
+  .drop-zone:hover, .drop-zone.drag-over {
+    border-color: var(--gold);
+    background: var(--gold-dim);
+  }
+  .drop-zone input[type=file] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+  }
+  .drop-icon { font-size: 40px; margin-bottom: 14px; display: block; }
+  .drop-title { font-size: 16px; font-weight: 600; color: var(--cream); margin-bottom: 6px; }
+  .drop-desc { font-size: 13px; color: var(--muted); }
+  .drop-formats { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 14px; }
+
+  .file-list { margin-top: 20px; display: flex; flex-direction: column; gap: 10px; }
+  .file-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .file-icon { font-size: 22px; flex-shrink: 0; }
+  .file-info { flex: 1; min-width: 0; }
+  .file-name { font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .file-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .file-status { font-size: 12px; font-weight: 600; }
+  .file-status.ready { color: var(--success-light); }
+  .file-status.processing { color: var(--gold); }
+  .file-status.error { color: var(--error-light); }
+
+  .progress-bar-wrap {
+    background: var(--border);
+    border-radius: 4px;
+    height: 4px;
+    margin-top: 6px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    border-radius: 4px;
+    transition: width 0.3s;
+  }
+
+  /* ════════════════════════════
+     QUIZ SETTINGS
+  ════════════════════════════ */
+  .settings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-label { font-size: 12px; font-weight: 600; color: var(--muted-light); letter-spacing: 0.05em; text-transform: uppercase; }
+  .form-select, .form-input {
+    background: var(--navy-light);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    padding: 10px 12px;
+    font-size: 13.5px;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+  .form-select:focus, .form-input:focus { border-color: var(--gold); }
+  .form-select option { background: var(--charcoal); }
+
+  .checkbox-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 12px;
+    background: var(--navy-light);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-size: 13px;
+    color: var(--muted-light);
+  }
+  .checkbox-item input { accent-color: var(--gold); }
+  .checkbox-item.checked { border-color: rgba(201,168,76,0.3); background: var(--gold-dim); color: var(--text); }
+
+  /* ════════════════════════════
+     QUIZ UI
+  ════════════════════════════ */
+  .quiz-header {
+    background: var(--charcoal);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .quiz-progress-ring { position: relative; width: 52px; height: 52px; flex-shrink: 0; }
+  .quiz-progress-ring svg { transform: rotate(-90deg); }
+  .quiz-progress-ring .ring-bg { fill: none; stroke: var(--border); stroke-width: 4; }
+  .quiz-progress-ring .ring-fill { fill: none; stroke: var(--gold); stroke-width: 4; stroke-linecap: round; transition: stroke-dashoffset 0.4s; }
+  .ring-text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--gold);
+  }
+
+  .quiz-meta { flex: 1; }
+  .quiz-q-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+  .quiz-q-count { font-size: 17px; font-weight: 700; color: var(--cream); }
+
+  .quiz-timer {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    background: var(--navy);
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+  }
+
+  .quiz-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 28px;
+    margin-bottom: 16px;
+  }
+
+  .question-type-badge { margin-bottom: 12px; }
+  .question-text {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--cream);
+    line-height: 1.55;
+    margin-bottom: 22px;
+  }
+  .question-nec { font-size: 12px; color: var(--gold); margin-bottom: 16px; font-style: italic; }
+
+  .options-list { display: flex; flex-direction: column; gap: 10px; }
+  .option-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    background: var(--navy-light);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: left;
+    width: 100%;
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.45;
+  }
+  .option-item:hover { border-color: var(--gold); background: var(--gold-dim); }
+  .option-item.selected { border-color: var(--gold); background: var(--gold-dim); }
+  .option-item.correct { border-color: var(--success-light); background: rgba(46,125,94,0.15); color: var(--success-light); }
+  .option-item.incorrect { border-color: var(--error-light); background: rgba(192,57,43,0.15); color: var(--error-light); }
+  .option-letter {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+    color: var(--muted-light);
+    margin-top: -1px;
+  }
+  .option-item.selected .option-letter { background: var(--gold); color: var(--navy); }
+  .option-item.correct .option-letter { background: var(--success-light); color: var(--navy); }
+  .option-item.incorrect .option-letter { background: var(--error-light); color: #fff; }
+
+  .tf-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .tf-btn {
+    padding: 18px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--navy-light);
+    color: var(--text);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+  }
+  .tf-btn:hover { border-color: var(--gold); background: var(--gold-dim); }
+  .tf-btn.selected { border-color: var(--gold); background: var(--gold-dim); color: var(--gold); }
+  .tf-btn.correct { border-color: var(--success-light); background: rgba(46,125,94,0.15); color: var(--success-light); }
+  .tf-btn.incorrect { border-color: var(--error-light); background: rgba(192,57,43,0.15); color: var(--error-light); }
+
+  .fill-blank-input {
+    width: 100%;
+    background: var(--navy-light);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    color: var(--text);
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .fill-blank-input:focus { border-color: var(--gold); }
+  .fill-blank-input.correct { border-color: var(--success-light); }
+  .fill-blank-input.incorrect { border-color: var(--error-light); }
+
+  .short-answer-textarea {
+    width: 100%;
+    background: var(--navy-light);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    color: var(--text);
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+    resize: vertical;
+    min-height: 100px;
+    font-family: inherit;
+    line-height: 1.5;
+  }
+  .short-answer-textarea:focus { border-color: var(--gold); }
+
+  .answer-feedback {
+    margin-top: 16px;
+    padding: 14px 16px;
+    border-radius: 10px;
+    font-size: 13.5px;
+    line-height: 1.5;
+    display: none;
+  }
+  .answer-feedback.correct { background: rgba(46,125,94,0.15); border: 1px solid rgba(74,222,128,0.25); color: var(--success-light); }
+  .answer-feedback.incorrect { background: rgba(192,57,43,0.15); border: 1px solid rgba(248,113,113,0.25); color: var(--error-light); }
+  .answer-feedback.shown { display: block; }
+
+  .quiz-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  /* ════════════════════════════
+     QUIZ RESULTS
+  ════════════════════════════ */
+  .results-hero {
+    text-align: center;
+    padding: 40px 24px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    margin-bottom: 24px;
+  }
+
+  .score-circle {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: conic-gradient(var(--gold) 0%, var(--gold) calc(var(--pct) * 1%), var(--border) calc(var(--pct) * 1%));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    position: relative;
+  }
+  .score-circle-inner {
+    width: 108px;
+    height: 108px;
+    border-radius: 50%;
+    background: var(--card);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .score-pct { font-size: 30px; font-weight: 800; color: var(--cream); letter-spacing: -0.03em; }
+  .score-label { font-size: 11px; color: var(--muted); font-weight: 600; }
+
+  .results-grade {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 6px;
+  }
+  .results-message { font-size: 14px; color: var(--muted); margin-bottom: 20px; }
+
+  .results-stats { display: flex; justify-content: center; gap: 32px; }
+  .results-stat { text-align: center; }
+  .results-stat-val { font-size: 22px; font-weight: 700; color: var(--cream); }
+  .results-stat-label { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  .review-list { display: flex; flex-direction: column; gap: 12px; }
+  .review-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+  }
+  .review-item.correct-item { border-left: 3px solid var(--success-light); }
+  .review-item.incorrect-item { border-left: 3px solid var(--error-light); }
+  .review-q { font-size: 13.5px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+  .review-answer { font-size: 12.5px; color: var(--muted); }
+  .review-answer strong { color: var(--text); }
+
+  /* ════════════════════════════
+     FLASHCARD MODE
+  ════════════════════════════ */
+  .flashcard-wrap {
+    max-width: 680px;
+    margin: 0 auto;
+  }
+  .flashcard-container {
+    perspective: 1200px;
+    margin-bottom: 24px;
+    height: 360px;
+  }
+  .flashcard {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+  }
+  .flashcard.flipped { transform: rotateY(180deg); }
+  .card-face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 36px 28px;
+    text-align: center;
+  }
+  .card-front {
+    background: var(--card);
+    border: 1px solid var(--border);
+  }
+  .card-back {
+    background: linear-gradient(135deg, #172035 0%, #1d2a45 100%);
+    border: 1px solid rgba(201,168,76,0.3);
+    transform: rotateY(180deg);
+  }
+  .card-face-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .card-face-label.back { color: var(--gold); }
+  .card-text { font-size: 19px; font-weight: 600; color: var(--cream); line-height: 1.5; }
+  .card-hint { font-size: 12px; color: var(--muted); margin-top: 20px; }
+  .card-nec { font-size: 12px; color: var(--gold); margin-top: 12px; }
+
+  .flashcard-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .fc-nav { display: flex; align-items: center; gap: 16px; }
+  .fc-counter { font-size: 13px; color: var(--muted); font-weight: 600; }
+  .fc-progress { display: flex; gap: 4px; flex-wrap: wrap; justify-content: center; }
+  .fc-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: background 0.2s;
+  }
+  .fc-dot.known { background: var(--success-light); }
+  .fc-dot.unknown { background: var(--error-light); }
+  .fc-dot.current { background: var(--gold); }
+
+  /* ════════════════════════════
+     PROGRESS SECTION
+  ════════════════════════════ */
+  .chart-wrap {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .chart-title { font-size: 13px; font-weight: 700; color: var(--cream); margin-bottom: 16px; }
+  .chart-canvas { width: 100% !important; }
+
+  .session-list { display: flex; flex-direction: column; gap: 10px; }
+  .session-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .session-score-badge {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+  .session-score-badge.high { background: rgba(46,125,94,0.2); color: var(--success-light); }
+  .session-score-badge.mid { background: rgba(201,168,76,0.15); color: var(--gold); }
+  .session-score-badge.low { background: rgba(192,57,43,0.15); color: var(--error-light); }
+  .session-info { flex: 1; min-width: 120px; }
+  .session-name { font-size: 13px; font-weight: 600; color: var(--text); }
+  .session-date { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  /* ════════════════════════════
+     SETTINGS PAGE
+  ════════════════════════════ */
+  .settings-section { margin-bottom: 28px; }
+  .settings-section-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .settings-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .settings-row:last-child { border-bottom: none; }
+  .settings-row-info { flex: 1; }
+  .settings-row-title { font-size: 13.5px; font-weight: 600; color: var(--text); }
+  .settings-row-desc { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  /* Toggle switch */
+  .toggle-wrap { display: flex; align-items: center; gap: 8px; }
+  .toggle {
+    position: relative;
+    width: 42px;
+    height: 24px;
+    cursor: pointer;
+  }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .toggle-slider {
+    position: absolute;
+    inset: 0;
+    background: var(--border);
+    border-radius: 24px;
+    transition: 0.2s;
+  }
+  .toggle-slider::before {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    left: 3px;
+    top: 3px;
+    background: #fff;
+    border-radius: 50%;
+    transition: 0.2s;
+  }
+  .toggle input:checked + .toggle-slider { background: var(--gold); }
+  .toggle input:checked + .toggle-slider::before { transform: translateX(18px); }
+
+  /* ════════════════════════════
+     LOADING STATES
+  ════════════════════════════ */
+  .spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--border);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  .spinner-lg { width: 36px; height: 36px; border-width: 3px; }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10,22,40,0.85);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+    gap: 20px;
+  }
+  .loading-text { font-size: 15px; color: var(--text); font-weight: 600; }
+  .loading-sub { font-size: 12px; color: var(--muted); }
+
+  /* ════════════════════════════
+     TOAST NOTIFICATIONS
+  ════════════════════════════ */
+  .toast-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .toast {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    font-size: 13px;
+    color: var(--text);
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    max-width: 320px;
+    animation: slideIn 0.25s ease;
+    cursor: pointer;
+  }
+  .toast.success { border-left: 3px solid var(--success-light); }
+  .toast.error { border-left: 3px solid var(--error-light); }
+  .toast.info { border-left: 3px solid var(--gold); }
+  @keyframes slideIn { from { transform: translateX(20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+  /* Modal */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 500;
+    padding: 20px;
+    backdrop-filter: blur(3px);
+    display: none;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--charcoal);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 28px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: var(--shadow);
+    position: relative;
+  }
+  .modal-title { font-size: 17px; font-weight: 700; color: var(--cream); margin-bottom: 6px; }
+  .modal-desc { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+  .modal-close {
+    position: absolute;
+    top: 16px; right: 16px;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 20px;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: color 0.2s;
+  }
+  .modal-close:hover { color: var(--text); }
+
+  /* ════════════════════════════
+     EMPTY STATES
+  ════════════════════════════ */
+  .empty-state {
+    text-align: center;
+    padding: 48px 24px;
+    color: var(--muted);
+  }
+  .empty-icon { font-size: 40px; margin-bottom: 12px; display: block; opacity: 0.5; }
+  .empty-title { font-size: 15px; font-weight: 600; color: var(--muted-light); margin-bottom: 6px; }
+  .empty-desc { font-size: 13px; }
+
+  /* ════════════════════════════
+     FOOTER
+  ════════════════════════════ */
+  .app-footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 11px;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    letter-spacing: 0.05em;
+    margin-top: auto;
+  }
+  .footer-brand {
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0.7;
+    font-size: 10px;
+  }
+
+  /* ════════════════════════════
+     RESPONSIVE
+  ════════════════════════════ */
+  @media (max-width: 860px) {
+    .sidebar {
+      transform: translateX(-100%);
+      z-index: 200;
+    }
+    .sidebar.open { transform: translateX(0); }
+    .sidebar-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 199;
+      display: none;
+    }
+    .sidebar-overlay.open { display: block; }
+    .main-content { margin-left: 0; }
+    .btn-hamburger { display: flex; }
+    .page-inner { padding: 16px; }
+    .grid-4 { grid-template-columns: repeat(2, 1fr); }
+    .grid-3 { grid-template-columns: 1fr; }
+    .grid-2 { grid-template-columns: 1fr; }
+    .tf-options { grid-template-columns: 1fr 1fr; }
+    .results-stats { gap: 20px; }
+    .flashcard-container { height: 300px; }
+    .card-text { font-size: 16px; }
+  }
+
+  @media (max-width: 480px) {
+    .login-card { padding: 36px 24px; }
+    .grid-4 { grid-template-columns: 1fr 1fr; }
+    .quiz-card { padding: 20px 16px; }
+    .checkbox-grid { grid-template-columns: 1fr; }
+  }
+
+  /* Pulse animation for generate button */
+  @keyframes pulse-gold {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(201,168,76,0.4); }
+    50% { box-shadow: 0 0 0 8px rgba(201,168,76,0); }
+  }
+  .btn-pulse { animation: pulse-gold 2s infinite; }
+
+  /* Shimmer loading */
+  .shimmer {
+    background: linear-gradient(90deg, var(--card) 25%, var(--card-hover) 50%, var(--card) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.4s infinite;
+    border-radius: 8px;
+    height: 16px;
+    margin-bottom: 8px;
+  }
+  @keyframes shimmer { to { background-position: -200% 0; } }
+
+  /* Topic tags */
+  .topic-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .topic-tag {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    background: var(--navy-light);
+    border: 1px solid var(--border);
+    color: var(--muted-light);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .topic-tag.active { background: var(--gold-dim); border-color: rgba(201,168,76,0.3); color: var(--gold); }
+
+  .highlight-gold { color: var(--gold); }
+  .mt-4 { margin-top: 4px; }
+  .mt-8 { margin-top: 8px; }
+  .mt-12 { margin-top: 12px; }
+  .mt-16 { margin-top: 16px; }
+  .mt-20 { margin-top: 20px; }
+  .mt-24 { margin-top: 24px; }
+  .mb-16 { margin-bottom: 16px; }
+  .mb-20 { margin-bottom: 20px; }
+  .flex { display: flex; }
+  .flex-center { display: flex; align-items: center; }
+  .gap-8 { gap: 8px; }
+  .gap-12 { gap: 12px; }
+  .gap-16 { gap: 16px; }
+  .w-full { width: 100%; }
+  .text-muted { color: var(--muted); }
+  .text-gold { color: var(--gold); }
+  .text-sm { font-size: 12.5px; }
+  .fw-600 { font-weight: 600; }
+  .text-center { text-align: center; }
+  .separator { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+
+  /* ════ PEER LEARNING — GROUPS ════ */
+  .group-card { background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden; }
+  .group-card::before { content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold-light));opacity:0;transition:opacity 0.2s; }
+  .group-card:hover { border-color:rgba(201,168,76,0.35);transform:translateY(-2px);box-shadow:var(--shadow); }
+  .group-card:hover::before,.group-card.joined::before { opacity:1; }
+  .group-card.joined { border-color:rgba(201,168,76,0.2); }
+  .group-name { font-size:16px;font-weight:700;color:var(--cream);margin-bottom:4px;letter-spacing:-0.01em; }
+  .group-desc { font-size:12.5px;color:var(--muted);margin-bottom:14px;line-height:1.45; }
+  .group-meta { display:flex;align-items:center;gap:10px;flex-wrap:wrap; }
+  .member-stack { display:flex;align-items:center; }
+  .member-avatar { width:28px;height:28px;border-radius:50%;border:2px solid var(--card);margin-left:-8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--navy);flex-shrink:0;overflow:hidden; }
+  .member-stack .member-avatar:first-child { margin-left:0; }
+  .group-code-badge { font-family:monospace;font-size:13px;font-weight:700;background:var(--navy);border:1px solid var(--border-light);padding:4px 10px;border-radius:6px;color:var(--gold);letter-spacing:0.12em;cursor:pointer;transition:background 0.15s; }
+  .group-code-badge:hover { background:var(--gold-dim); }
+  .tab-bar { display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:20px;overflow-x:auto;-webkit-overflow-scrolling:touch; }
+  .tab-btn { padding:11px 18px;font-size:13px;font-weight:600;color:var(--muted);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all 0.15s;margin-bottom:-1px; }
+  .tab-btn:hover { color:var(--text); }
+  .tab-btn.active { color:var(--gold);border-bottom-color:var(--gold); }
+  .tab-panel { display:none; }
+  .tab-panel.active { display:block; }
+  .member-row { display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border); }
+  .member-row:last-child { border-bottom:none; }
+  .member-row-avatar { width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--navy);flex-shrink:0; }
+  .member-row-info { flex:1;min-width:0; }
+  .member-row-name { font-size:13.5px;font-weight:600;color:var(--text); }
+  .member-row-meta { font-size:11.5px;color:var(--muted);margin-top:2px; }
+  .online-dot { width:8px;height:8px;border-radius:50%;background:var(--success-light);display:inline-block;margin-right:4px;box-shadow:0 0 6px rgba(74,222,128,0.5); }
+  .offline-dot { width:8px;height:8px;border-radius:50%;background:var(--border-light);display:inline-block;margin-right:4px; }
+  .activity-item { display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);align-items:flex-start; }
+  .activity-item:last-child { border-bottom:none; }
+  .activity-icon { width:34px;height:34px;border-radius:50%;background:var(--navy-light);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;margin-top:1px; }
+  .activity-text { font-size:13px;color:var(--text);line-height:1.4; }
+  .activity-time { font-size:11px;color:var(--muted);margin-top:2px; }
+  .shared-doc-item { display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--navy-light);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:8px;transition:all 0.15s; }
+  .shared-doc-item:hover { border-color:var(--border-light);background:var(--card-hover); }
+  .group-stat-row { display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border); }
+  .group-stat-row:last-child { border-bottom:none; }
+  .group-stat-name { flex:1;font-size:13px;color:var(--text); }
+  .group-stat-bar-wrap { width:120px;background:var(--border);border-radius:4px;height:6px;overflow:hidden; }
+  .group-stat-bar { height:100%;border-radius:4px;background:linear-gradient(90deg,var(--gold),var(--gold-light));transition:width 0.6s ease; }
+  .group-stat-pct { font-size:12px;font-weight:700;color:var(--gold);width:38px;text-align:right; }
+
+  /* ════ LIVE QUIZ ROOM ════ */
+  .live-room-header { background:linear-gradient(135deg,#0f1f3d 0%,#172035 100%);border:1px solid rgba(201,168,76,0.3);border-radius:var(--radius-lg);padding:20px 24px;margin-bottom:20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap; }
+  .live-badge { display:flex;align-items:center;gap:6px;background:rgba(192,57,43,0.2);border:1px solid rgba(248,113,113,0.35);padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;color:var(--error-light);letter-spacing:0.06em; }
+  .live-pulse { width:8px;height:8px;border-radius:50%;background:var(--error-light);animation:livePulse 1s infinite; }
+  @keyframes livePulse { 0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.5;transform:scale(0.85);} }
+  .countdown-ring { position:relative;width:64px;height:64px;flex-shrink:0; }
+  .countdown-ring svg { transform:rotate(-90deg); }
+  .countdown-ring .cr-bg { fill:none;stroke:var(--border);stroke-width:5; }
+  .countdown-ring .cr-fill { fill:none;stroke:var(--gold);stroke-width:5;stroke-linecap:round;transition:stroke-dashoffset 0.9s linear; }
+  .countdown-text { position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:var(--cream); }
+  .leaderboard { background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden; }
+  .leaderboard-header { background:linear-gradient(90deg,#0f1f3d,#172035);padding:14px 18px;font-size:13px;font-weight:700;color:var(--cream);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px; }
+  .lb-row { display:flex;align-items:center;gap:10px;padding:11px 18px;border-bottom:1px solid var(--border);transition:background 0.2s; }
+  .lb-row:last-child { border-bottom:none; }
+  .lb-row.me { background:var(--gold-dim); }
+  .lb-row.rank-1 { background:rgba(201,168,76,0.07); }
+  .lb-rank { width:22px;font-size:14px;font-weight:800;text-align:center;flex-shrink:0; }
+  .lb-rank.gold { color:#ffd700; }
+  .lb-rank.silver { color:#c0c0c0; }
+  .lb-rank.bronze { color:#cd7f32; }
+  .lb-name { flex:1;font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+  .lb-score { font-size:13px;font-weight:700;color:var(--cream); }
+  .lb-correct { font-size:11px;color:var(--muted);margin-left:2px; }
+  .lb-bar-wrap { width:70px;background:var(--border);border-radius:4px;height:5px;overflow:hidden;flex-shrink:0; }
+  .lb-bar { height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:4px;transition:width 0.5s ease; }
+  .lb-status-dot { width:7px;height:7px;border-radius:50%;flex-shrink:0; }
+  .lb-status-dot.answered { background:var(--success-light); }
+  .lb-status-dot.thinking { background:var(--gold);animation:livePulse 0.8s infinite; }
+  .lb-status-dot.waiting { background:var(--border-light); }
+  .waiting-room { text-align:center;padding:48px 24px; }
+  .session-code-display { font-family:monospace;font-size:36px;font-weight:800;letter-spacing:0.18em;color:var(--gold);background:var(--navy-light);border:2px solid rgba(201,168,76,0.3);border-radius:var(--radius-lg);padding:16px 28px;display:inline-block;margin:16px auto;cursor:pointer; }
+  .podium { display:flex;align-items:flex-end;justify-content:center;gap:12px;margin:24px 0; }
+  .podium-slot { display:flex;flex-direction:column;align-items:center;gap:6px; }
+  .podium-name { font-size:11px;font-weight:600;color:var(--muted-light);text-align:center;max-width:64px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+  .podium-score { font-size:12px;font-weight:700;color:var(--cream); }
+  .chat-wrap { display:flex;flex-direction:column;height:360px; }
+  .chat-messages { flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px; }
+  .chat-bubble-wrap { display:flex;gap:8px;align-items:flex-end; }
+  .chat-bubble-wrap.me { flex-direction:row-reverse; }
+  .chat-bubble { max-width:72%;padding:9px 13px;border-radius:16px;font-size:13px;line-height:1.45;color:var(--text); }
+  .chat-bubble-wrap:not(.me) .chat-bubble { background:var(--navy-light);border:1px solid var(--border);border-bottom-left-radius:4px; }
+  .chat-bubble-wrap.me .chat-bubble { background:var(--gold-dim);border:1px solid rgba(201,168,76,0.25);border-bottom-right-radius:4px;color:var(--cream); }
+  .chat-sender { font-size:10px;color:var(--muted);margin-bottom:3px; }
+  .chat-bubble-wrap.me .chat-sender { text-align:right; }
+  .chat-input-row { display:flex;gap:8px;padding:12px 14px;border-top:1px solid var(--border); }
+  .chat-input { flex:1;background:var(--navy-light);border:1px solid var(--border);border-radius:20px;padding:9px 14px;color:var(--text);font-size:13px;outline:none; }
+  .chat-input:focus { border-color:var(--gold); }
+  .nav-badge { background:var(--error-light);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;margin-left:auto; }
+  .discover-banner { background:linear-gradient(135deg,#0f1f3d 0%,#172240 50%,#131c2e 100%);border:1px solid rgba(201,168,76,0.2);border-radius:var(--radius-lg);padding:28px;text-align:center;margin-bottom:20px;position:relative;overflow:hidden; }
+  .discover-banner::before { content:'\01F465';position:absolute;font-size:120px;opacity:0.04;top:-20px;right:-20px;pointer-events:none; }
+  @media(max-width:860px){.group-stat-bar-wrap{width:70px;}.podium{gap:6px;}}
+</style>
+</head>
+<body>
+
+<!-- ──────────────────────────── TOAST CONTAINER ──────────────────────────── -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ──────────────────────────── LOADING OVERLAY ──────────────────────────── -->
+<div class="loading-overlay" id="loadingOverlay" style="display:none">
+  <div class="spinner spinner-lg"></div>
+  <div class="loading-text" id="loadingText">Generating your quiz…</div>
+  <div class="loading-sub" id="loadingSub">Analyzing uploaded content with AI</div>
+</div>
+
+<!-- ──────────────────────────── API KEY MODAL ──────────────────────────── -->
+<div class="modal-overlay" id="apiModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('apiModal')">✕</button>
+    <div class="modal-title">⚙️ Configure Gemini API Key</div>
+    <div class="modal-desc">Enter your Google Gemini API key to enable AI-powered quiz generation. Your key is stored locally and never sent to any server other than Google's API.</div>
+    <div class="form-group">
+      <label class="form-label">Gemini API Key</label>
+      <input type="password" class="form-input" id="apiKeyInput" placeholder="AIza...">
+    </div>
+    <div style="font-size:12px;color:var(--muted);margin-top:8px;margin-bottom:20px;">
+      Get a free key at <strong style="color:var(--gold)">aistudio.google.com</strong> → Get API Key
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-primary btn-full" onclick="saveApiKey()">Save Key</button>
+      <button class="btn btn-secondary" onclick="closeModal('apiModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ──────────────────────────── SIDEBAR OVERLAY ──────────────────────────── -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<!-- ════════════════════════════ LOGIN VIEW ════════════════════════════ -->
+<div id="view-login" class="view active">
+  <div class="login-card">
+    <div class="brand-wordmark">Damask Holdings</div>
+    <div class="login-logo">⚡</div>
+    <div class="login-title">Voltage</div>
+    <div class="login-subtitle">IBEW Apprentice Study Platform<br>Master the code. Ace the exam.</div>
+    <button class="btn-google" onclick="handleGoogleSignIn()">
+      <svg class="google-icon" viewBox="0 0 24 24">
+        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+      </svg>
+      Continue with Google
+    </button>
+    <div class="login-footer">
+      By signing in, you agree to use this tool responsibly.<br>
+      Study hard. Work safe. Know the code.
+    </div>
+  </div>
+  <div style="position:absolute;bottom:24px;left:0;right:0;text-align:center;">
+    <div class="footer-brand">Damask Holdings</div>
+    <div style="font-size:10px;color:var(--muted);margin-top:4px;letter-spacing:0.05em;">Built for the trades.</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════ APP VIEW ════════════════════════════ -->
+<div id="view-app" class="view">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-brand">
+        <div class="sidebar-brand-icon">⚡</div>
+        Voltage
+      </div>
+      <div class="sidebar-tagline">IBEW Study Tool</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Study</div>
+      <div class="nav-item active" onclick="navigate('dashboard')" data-page="dashboard">
+        <span class="nav-icon">🏠</span> Dashboard
+      </div>
+      <div class="nav-item" onclick="navigate('upload')" data-page="upload">
+        <span class="nav-icon">📁</span> Upload Materials
+      </div>
+      <div class="nav-item" onclick="navigate('quiz')" data-page="quiz">
+        <span class="nav-icon">📝</span> Take a Quiz
+      </div>
+      <div class="nav-item" onclick="navigate('flashcards')" data-page="flashcards">
+        <span class="nav-icon">🃏</span> Flashcards
+      </div>
+      <div class="nav-section-label">Track</div>
+      <div class="nav-item" onclick="navigate('progress')" data-page="progress">
+        <span class="nav-icon">📊</span> My Progress
+      </div>
+      <div class="nav-section-label">Reference</div>
+      <div class="nav-item" onclick="navigate('topics')" data-page="topics">
+        <span class="nav-icon">📖</span> Study Topics
+      </div>
+      <div class="nav-item" onclick="navigate('settings')" data-page="settings">
+        <span class="nav-icon">⚙️</span> Settings
+      </div>
+    </nav>
+    <div class="sidebar-user">
+      <div class="user-avatar" id="sidebarAvatar">U</div>
+      <div class="user-info">
+        <div class="user-name" id="sidebarUserName">Apprentice</div>
+        <div class="user-role" id="sidebarUserRole">Year 1</div>
+      </div>
+      <button class="btn-signout" onclick="signOut()" title="Sign out">↩</button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <div class="main-content">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button class="btn-hamburger" onclick="toggleSidebar()">☰</button>
+        <div class="topbar-title" id="topbarTitle">Dashboard</div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-secondary btn-sm" onclick="openModal('apiModal')" title="API Settings">⚙️ API Key</button>
+        <div class="badge badge-gold" id="topbarYearBadge">Year 1</div>
+      </div>
+    </div>
+
+    <div class="page-inner">
+
+      <!-- ─── DASHBOARD PAGE ─── -->
+      <div id="page-dashboard" class="page-section active">
+        <div class="section-header">
+          <div>
+            <div class="section-title">Good evening, <span class="highlight-gold" id="dashboardName">Apprentice</span> 👋</div>
+            <div class="section-desc">Ready to hit the books? Your next exam won't study itself.</div>
+          </div>
+          <button class="btn btn-primary" onclick="navigate('upload')">+ New Quiz</button>
+        </div>
+
+        <div class="grid-4 mb-16" style="margin-bottom:20px;">
+          <div class="stat-card">
+            <span class="stat-icon">📝</span>
+            <div class="stat-label">Quizzes Taken</div>
+            <div class="stat-value" id="statQuizzes">0</div>
+            <div class="stat-sub">All time</div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">🎯</span>
+            <div class="stat-label">Avg Score</div>
+            <div class="stat-value" id="statAvgScore">—</div>
+            <div class="stat-sub">Last 5 sessions</div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">🔥</span>
+            <div class="stat-label">Study Streak</div>
+            <div class="stat-value" id="statStreak">0</div>
+            <div class="stat-sub">Days in a row</div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">📁</span>
+            <div class="stat-label">Files Uploaded</div>
+            <div class="stat-value" id="statFiles">0</div>
+            <div class="stat-sub">Materials loaded</div>
+          </div>
+        </div>
+
+        <div class="grid-2" style="gap:20px;">
+          <div>
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">📈 Recent Scores</div>
+                <button class="btn btn-ghost btn-sm" onclick="navigate('progress')">View All →</button>
+              </div>
+              <div id="dashboardSessionList">
+                <div class="empty-state" style="padding:24px;">
+                  <span class="empty-icon">📊</span>
+                  <div class="empty-title">No sessions yet</div>
+                  <div class="empty-desc">Complete a quiz to see your scores here</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="card" style="margin-bottom:16px;">
+              <div class="card-header">
+                <div class="card-title">⚡ Quick Start</div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:10px;">
+                <button class="btn btn-secondary btn-full" onclick="startQuickQuiz('nec')">📗 NEC Code Quiz</button>
+                <button class="btn btn-secondary btn-full" onclick="startQuickQuiz('ohm')">🔢 Ohm's Law & Calculations</button>
+                <button class="btn btn-secondary btn-full" onclick="startQuickQuiz('safety')">🦺 OSHA / NFPA 70E Safety</button>
+                <button class="btn btn-secondary btn-full" onclick="startQuickQuiz('motors')">⚙️ Motor Controls</button>
+                <button class="btn btn-secondary btn-full" onclick="startQuickQuiz('conduit')">🔧 Conduit Bending</button>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">📁 Uploaded Files</div>
+                <button class="btn btn-ghost btn-sm" onclick="navigate('upload')">+ Add</button>
+              </div>
+              <div id="dashboardFileList">
+                <div class="empty-state" style="padding:24px;">
+                  <span class="empty-icon">📂</span>
+                  <div class="empty-title">No files yet</div>
+                  <div class="empty-desc">Upload PDFs, images, or documents to generate custom quizzes</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── UPLOAD PAGE ─── -->
+      <div id="page-upload" class="page-section">
+        <div class="section-header">
+          <div>
+            <div class="section-title">Upload Study Materials</div>
+            <div class="section-desc">Upload NEC codebooks, wiring diagrams, handouts, or any study material — AI will generate a targeted quiz from your content.</div>
+          </div>
+        </div>
+
+        <div class="card mb-20" style="margin-bottom:20px;">
+          <div class="drop-zone" id="dropZone">
+            <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.txt" multiple onchange="handleFileSelect(event)">
+            <span class="drop-icon">📎</span>
+            <div class="drop-title">Drop files here or click to browse</div>
+            <div class="drop-desc">Supports PDF, JPG, PNG, DOC, DOCX, TXT</div>
+            <div class="drop-formats">
+              <span class="badge badge-muted">📄 PDF</span>
+              <span class="badge badge-muted">🖼️ JPG/PNG</span>
+              <span class="badge badge-muted">📝 DOC/DOCX</span>
+              <span class="badge badge-muted">📃 TXT</span>
+            </div>
+          </div>
+          <div class="file-list" id="fileList"></div>
+        </div>
+
+        <div class="card" id="quizConfigCard" style="display:none;">
+          <div class="card-header">
+            <div class="card-title">🎛️ Quiz Configuration</div>
+          </div>
+
+          <div class="settings-grid">
+            <div class="form-group">
+              <label class="form-label">Difficulty Level</label>
+              <select class="form-select" id="difficultySelect">
+                <option value="year1">Apprentice — Year 1</option>
+                <option value="year2">Apprentice — Year 2</option>
+                <option value="year3">Apprentice — Year 3</option>
+                <option value="year4">Apprentice — Year 4</option>
+                <option value="journeyman">Journeyman</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Number of Questions</label>
+              <select class="form-select" id="questionCountSelect">
+                <option value="5">5 Questions</option>
+                <option value="10" selected>10 Questions</option>
+                <option value="15">15 Questions</option>
+                <option value="20">20 Questions</option>
+                <option value="30">30 Questions</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Focus Topic</label>
+              <select class="form-select" id="focusTopicSelect">
+                <option value="general">General — All Topics</option>
+                <option value="nec">NEC Code References</option>
+                <option value="ohm">Ohm's Law & Calculations</option>
+                <option value="load">Load Calculations</option>
+                <option value="conduit">Conduit Bending</option>
+                <option value="motors">Motor Controls</option>
+                <option value="grounding">Grounding & Bonding</option>
+                <option value="safety">OSHA / NFPA 70E Safety</option>
+                <option value="wiring">Wiring Methods</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Quiz Mode</label>
+              <select class="form-select" id="quizModeSelect">
+                <option value="quiz">Quiz Mode</option>
+                <option value="flashcards">Flashcard Mode</option>
+                <option value="both">Both</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom:16px;">
+            <label class="form-label">Question Types</label>
+            <div class="checkbox-grid">
+              <label class="checkbox-item checked" id="chk-mc">
+                <input type="checkbox" checked onchange="updateCheckbox(this)"> Multiple Choice
+              </label>
+              <label class="checkbox-item checked" id="chk-tf">
+                <input type="checkbox" checked onchange="updateCheckbox(this)"> True / False
+              </label>
+              <label class="checkbox-item checked" id="chk-fill">
+                <input type="checkbox" checked onchange="updateCheckbox(this)"> Fill in the Blank
+              </label>
+              <label class="checkbox-item" id="chk-short">
+                <input type="checkbox" onchange="updateCheckbox(this)"> Short Answer
+              </label>
+            </div>
+          </div>
+
+          <button class="btn btn-primary btn-lg btn-full btn-pulse" onclick="generateQuiz()" id="generateBtn">
+            ⚡ Generate Quiz with AI
+          </button>
+        </div>
+      </div>
+
+      <!-- ─── QUIZ PAGE ─── -->
+      <div id="page-quiz" class="page-section">
+        <div id="quizContainer">
+          <div class="empty-state">
+            <span class="empty-icon">📝</span>
+            <div class="empty-title">No active quiz</div>
+            <div class="empty-desc">Upload materials and generate a quiz, or use Quick Start from the Dashboard.</div>
+            <button class="btn btn-primary" style="margin-top:16px;" onclick="navigate('upload')">Upload & Generate</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── FLASHCARDS PAGE ─── -->
+      <div id="page-flashcards" class="page-section">
+        <div id="flashcardContainer">
+          <div class="empty-state">
+            <span class="empty-icon">🃏</span>
+            <div class="empty-title">No flashcards loaded</div>
+            <div class="empty-desc">Generate a quiz in Flashcard Mode to study here.</div>
+            <button class="btn btn-primary" style="margin-top:16px;" onclick="navigate('upload')">Create Flashcards</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── PROGRESS PAGE ─── -->
+      <div id="page-progress" class="page-section">
+        <div class="section-header">
+          <div>
+            <div class="section-title">My Progress</div>
+            <div class="section-desc">Track your performance across all sessions and topics.</div>
+          </div>
+          <button class="btn btn-danger btn-sm" onclick="clearProgress()">Clear History</button>
+        </div>
+
+        <div class="grid-4" style="margin-bottom:20px;">
+          <div class="stat-card">
+            <span class="stat-icon">📝</span>
+            <div class="stat-label">Total Quizzes</div>
+            <div class="stat-value" id="pStatQuizzes">0</div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">✅</span>
+            <div class="stat-label">Best Score</div>
+            <div class="stat-value" id="pStatBest">—</div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">📈</span>
+            <div class="stat-label">Avg Score</div>
+            <div class="stat-value" id="pStatAvg">—</div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">🎯</span>
+            <div class="stat-label">Questions Answered</div>
+            <div class="stat-value" id="pStatQuestions">0</div>
+          </div>
+        </div>
+
+        <div class="chart-wrap" style="margin-bottom:20px;">
+          <div class="chart-title">Score History</div>
+          <canvas id="progressChart" class="chart-canvas" height="180"></canvas>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Session History</div>
+          </div>
+          <div class="session-list" id="progressSessionList">
+            <div class="empty-state">
+              <span class="empty-icon">📊</span>
+              <div class="empty-title">No sessions recorded</div>
+              <div class="empty-desc">Complete a quiz to start tracking your progress</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── TOPICS PAGE ─── -->
+      <div id="page-topics" class="page-section">
+        <div class="section-header">
+          <div>
+            <div class="section-title">Electrical Study Topics</div>
+            <div class="section-desc">IBEW apprentice curriculum reference — tap any topic to generate a built-in quiz.</div>
+          </div>
+        </div>
+        <div id="topicsGrid"></div>
+      </div>
+
+      <!-- ─── SETTINGS PAGE ─── -->
+      <div id="page-settings" class="page-section">
+        <div class="section-header">
+          <div>
+            <div class="section-title">Settings</div>
+            <div class="section-desc">Customize your study experience.</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="settings-section">
+            <div class="settings-section-title">Account</div>
+            <div class="settings-row">
+              <div class="settings-row-info">
+                <div class="settings-row-title">Google Account</div>
+                <div class="settings-row-desc" id="settingsEmail">—</div>
+              </div>
+              <button class="btn btn-secondary btn-sm" onclick="signOut()">Sign Out</button>
+            </div>
+            <div class="settings-row">
+              <div class="settings-row-info">
+                <div class="settings-row-title">Apprentice Year</div>
+                <div class="settings-row-desc">Set your current training year</div>
+              </div>
+              <select class="form-select" style="width:auto;" id="yearSelect" onchange="updateYear()">
+                <option value="Year 1">Year 1</option>
+                <option value="Year 2">Year 2</option>
+                <option value="Year 3">Year 3</option>
+                <option value="Year 4">Year 4</option>
+                <option value="Journeyman">Journeyman</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <div class="settings-section-title">AI Configuration</div>
+            <div class="settings-row">
+              <div class="settings-row-info">
+                <div class="settings-row-title">Gemini API Key</div>
+                <div class="settings-row-desc">Required for AI quiz generation from uploaded files</div>
+              </div>
+              <button class="btn btn-secondary btn-sm" onclick="openModal('apiModal')">Configure</button>
+            </div>
+            <div class="settings-row">
+              <div class="settings-row-info">
+                <div class="settings-row-title">API Key Status</div>
+                <div class="settings-row-desc">Current API key validity</div>
+              </div>
+              <div id="apiKeyStatus" class="badge badge-muted">Not Set</div>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <div class="settings-section-title">Quiz Preferences</div>
+            <div class="settings-row">
+              <div class="settings-row-info">
+                <div class="settings-row-title">Show NEC References</div>
+                <div class="settings-row-desc">Display code section references with questions</div>
+              </div>
+              <label class="toggle">
+                <input type="checkbox" checked id="toggleNEC">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="settings-row">
+              <div class="settings-row-info">
+                <div class="settings-row-title">Show Explanations After Answer</div>
+                <div class="settings-row-desc">Display detailed feedback for each question</div>
+              </div>
+              <label class="toggle">
+                <input type="checkbox" checked id="toggleExplain">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="settings-row">
+              <div class="settings-row-info">
+                <div class="settings-row-title">Show Timer</div>
+                <div class="settings-row-desc">Track time spent per question</div>
+              </div>
+              <label class="toggle">
+                <input type="checkbox" checked id="toggleTimer">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <div class="settings-section-title">Data</div>
+            <div class="settings-row">
+              <div class="settings-row-info">
+                <div class="settings-row-title">Clear All Progress</div>
+                <div class="settings-row-desc">Delete all session history and scores</div>
+              </div>
+              <button class="btn btn-danger btn-sm" onclick="clearProgress()">Clear</button>
+            </div>
+            <div class="settings-row">
+              <div class="settings-row-info">
+                <div class="settings-row-title">Clear Uploaded Files</div>
+                <div class="settings-row-desc">Remove all uploaded study materials</div>
+              </div>
+              <button class="btn btn-danger btn-sm" onclick="clearFiles()">Clear</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <footer class="app-footer">
+      <div class="footer-brand">Damask Holdings</div>
+      <div style="margin-top:4px;">Voltage — IBEW Study Platform · Built for the electrical trade</div>
+    </footer>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+const state = {
+  user: null,
+  apiKey: localStorage.getItem('voltage_api_key') || '',
+  uploadedFiles: JSON.parse(localStorage.getItem('voltage_files') || '[]'),
+  sessions: JSON.parse(localStorage.getItem('voltage_sessions') || '[]'),
+  currentQuiz: null,
+  currentQuestion: 0,
+  answers: [],
+  timerInterval: null,
+  timeElapsed: 0,
+  currentFlashcards: null,
+  currentCardIndex: 0,
+  cardKnown: [],
+  progressChart: null,
+  year: localStorage.getItem('voltage_year') || 'Year 1',
+  fileContents: {}
+};
+
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+function init() {
+  updateApiKeyStatus();
+  buildTopicsGrid();
+  renderDashboard();
+}
+
+// ═══════════════════════════════════════
+// AUTH
+// ═══════════════════════════════════════
+const DEMO_USERS = [
+  { name: 'Alex Rivera', email: 'a.rivera@ibew.local', initials: 'AR' },
+  { name: 'Jordan Cole', email: 'j.cole@ibew.local', initials: 'JC' },
+  { name: 'Morgan Shaw', email: 'm.shaw@ibew.local', initials: 'MS' },
+];
+
+function handleGoogleSignIn() {
+  const user = DEMO_USERS[Math.floor(Math.random() * DEMO_USERS.length)];
+  user.year = state.year;
+  state.user = user;
+  localStorage.setItem('voltage_user', JSON.stringify(user));
+  loginSuccess(user);
+}
+
+function loginSuccess(user) {
+  document.getElementById('view-login').classList.remove('active');
+  document.getElementById('view-app').classList.add('active');
+  document.getElementById('sidebarUserName').textContent = user.name;
+  document.getElementById('sidebarUserRole').textContent = state.year;
+  document.getElementById('sidebarAvatar').textContent = user.name.charAt(0);
+  document.getElementById('dashboardName').textContent = user.name.split(' ')[0];
+  document.getElementById('settingsEmail').textContent = user.email;
+  document.getElementById('topbarYearBadge').textContent = state.year;
+  document.getElementById('yearSelect').value = state.year;
+  renderDashboard();
+  init();
+}
+
+function signOut() {
+  state.user = null;
+  document.getElementById('view-app').classList.remove('active');
+  document.getElementById('view-login').classList.add('active');
+  showToast('Signed out successfully', 'info');
+}
+
+// ═══════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════
+const PAGE_TITLES = {
+  dashboard: 'Dashboard', upload: 'Upload Materials', quiz: 'Quiz',
+  flashcards: 'Flashcards', progress: 'My Progress', topics: 'Study Topics', settings: 'Settings'
+};
+
+function navigate(page) {
+  document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  const navItem = document.querySelector(`[data-page="${page}"]`);
+  if (navItem) navItem.classList.add('active');
+  document.getElementById('topbarTitle').textContent = PAGE_TITLES[page] || page;
+  closeSidebar();
+  if (page === 'progress') renderProgress();
+  if (page === 'dashboard') renderDashboard();
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebarOverlay').classList.toggle('open');
+}
+
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('open');
+}
+
+// ═══════════════════════════════════════
+// FILE UPLOAD
+// ═══════════════════════════════════════
+const dropZone = document.getElementById('dropZone');
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('drag-over');
+  handleFiles(Array.from(e.dataTransfer.files));
+});
+
+function handleFileSelect(e) { handleFiles(Array.from(e.target.files)); }
+
+async function handleFiles(files) {
+  for (const file of files) {
+    if (file.size > 20 * 1024 * 1024) { showToast(`${file.name} is too large (max 20MB)`, 'error'); continue; }
+    const id = 'f_' + Date.now() + Math.random().toString(36).slice(2,6);
+    const fileData = { id, name: file.name, size: file.size, type: file.type, uploadedAt: new Date().toISOString() };
+    state.uploadedFiles.push(fileData);
+    saveFiles();
+    addFileItem(fileData, 'processing');
+    try {
+      const content = await extractFileContent(file, id);
+      state.fileContents[id] = content;
+      updateFileStatus(id, 'ready');
+      document.getElementById('quizConfigCard').style.display = 'block';
+    } catch (err) {
+      updateFileStatus(id, 'error', err.message);
+    }
+  }
+  renderDashboardFiles();
+}
+
+async function extractFileContent(file, id) {
+  return new Promise((resolve, reject) => {
+    if (file.type === 'application/pdf') {
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try {
+          const pdf = await pdfjsLib.getDocument({ data: e.target.result }).promise;
+          let text = '';
+          for (let i = 1; i <= Math.min(pdf.numPages, 30); i++) {
+            const page = await pdf.getPage(i);
+            const content = await page.getTextContent();
+            text += content.items.map(s => s.str).join(' ') + '\n';
+          }
+          resolve(text.slice(0, 15000));
+        } catch (err) { reject(new Error('PDF parse failed')); }
+      };
+      reader.readAsArrayBuffer(file);
+    } else if (file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (e) => resolve('IMAGE_DATA:' + e.target.result);
+      reader.readAsDataURL(file);
+    } else {
+      const reader = new FileReader();
+      reader.onload = (e) => resolve(e.target.result.slice(0, 15000));
+      reader.onerror = () => reject(new Error('Read failed'));
+      reader.readAsText(file);
+    }
+  });
+}
+
+function getFileIcon(type) {
+  if (type === 'application/pdf') return '📄';
+  if (type.startsWith('image/')) return '🖼️';
+  if (type.includes('word') || type.includes('document')) return '📝';
+  return '📃';
+}
+
+function formatBytes(b) {
+  if (b < 1024) return b + ' B';
+  if (b < 1024*1024) return (b/1024).toFixed(1) + ' KB';
+  return (b/1024/1024).toFixed(1) + ' MB';
+}
+
+function addFileItem(file, status) {
+  const list = document.getElementById('fileList');
+  const item = document.createElement('div');
+  item.className = 'file-item';
+  item.id = 'fi_' + file.id;
+  item.innerHTML = `
+    <div class="file-icon">${getFileIcon(file.type)}</div>
+    <div class="file-info">
+      <div class="file-name">${escHtml(file.name)}</div>
+      <div class="file-meta">${formatBytes(file.size)}</div>
+      <div class="progress-bar-wrap" id="pb_${file.id}">
+        <div class="progress-bar-fill" style="width:0%" id="pbf_${file.id}"></div>
+      </div>
+    </div>
+    <div class="file-status processing" id="fs_${file.id}">⏳ Reading…</div>
+    <button class="btn btn-icon btn-ghost" onclick="removeFile('${file.id}')" title="Remove">✕</button>
+  `;
+  list.appendChild(item);
+  // Animate progress bar
+  let pct = 0;
+  const bar = document.getElementById('pbf_' + file.id);
+  const interval = setInterval(() => {
+    pct = Math.min(pct + Math.random() * 15, 90);
+    if (bar) bar.style.width = pct + '%';
+  }, 200);
+  item._barInterval = interval;
+}
+
+function updateFileStatus(id, status, msg) {
+  const si = document.getElementById('fs_' + id);
+  const bar = document.getElementById('pbf_' + id);
+  const pb = document.getElementById('pb_' + id);
+  if (bar) bar.style.width = '100%';
+  setTimeout(() => { if (pb) pb.style.display = 'none'; }, 500);
+  if (si) {
+    if (status === 'ready') { si.className = 'file-status ready'; si.textContent = '✓ Ready'; }
+    else if (status === 'error') { si.className = 'file-status error'; si.textContent = '⚠ ' + (msg || 'Error'); }
+  }
+}
+
+function removeFile(id) {
+  state.uploadedFiles = state.uploadedFiles.filter(f => f.id !== id);
+  delete state.fileContents[id];
+  saveFiles();
+  const el = document.getElementById('fi_' + id);
+  if (el) el.remove();
+  if (state.uploadedFiles.length === 0) document.getElementById('quizConfigCard').style.display = 'none';
+  renderDashboardFiles();
+}
+
+function saveFiles() { localStorage.setItem('voltage_files', JSON.stringify(state.uploadedFiles)); }
+
+function clearFiles() {
+  state.uploadedFiles = [];
+  state.fileContents = {};
+  saveFiles();
+  document.getElementById('fileList').innerHTML = '';
+  document.getElementById('quizConfigCard').style.display = 'none';
+  renderDashboardFiles();
+  showToast('Files cleared', 'info');
+}
+
+// ═══════════════════════════════════════
+// BUILT-IN QUESTION BANKS
+// ═══════════════════════════════════════
+const QUESTION_BANKS = {
+  nec: [
+    { type:'mc', q:'According to NEC Article 210, what is the required minimum ampacity for a 20-ampere branch circuit conductor?', opts:['12 AWG copper','14 AWG copper','10 AWG copper','8 AWG copper'], ans:0, nec:'NEC 210.19', exp:'NEC 210.19 requires that branch circuit conductors have an ampacity not less than the maximum load to be served. A 20A circuit requires minimum 12 AWG copper.' },
+    { type:'tf', q:'NEC Article 250 requires that all grounding electrode conductors be copper only.', opts:['True','False'], ans:1, nec:'NEC 250.62', exp:'False. NEC 250.62 permits grounding electrode conductors to be of copper, aluminum, or copper-clad aluminum.' },
+    { type:'mc', q:'What is the maximum distance between supports for rigid metal conduit (RMC) in a straight run?', opts:['8 feet','10 feet','12 feet','15 feet'], ans:1, nec:'NEC 344.30', exp:'NEC 344.30 requires RMC to be supported every 10 feet and within 3 feet of each outlet box.' },
+    { type:'fill', q:'NEC Article ___ covers the installation of electrical systems in hazardous (classified) locations.', ans:'500', nec:'NEC Article 500', exp:'Article 500 covers electrical installations in Class I, II, and III hazardous locations.' },
+    { type:'mc', q:'Under NEC 210.52, a receptacle outlet is required in a kitchen at every countertop space wider than:', opts:['12 inches','18 inches','24 inches','36 inches'], ans:1, nec:'NEC 210.52(C)', exp:'NEC 210.52(C)(1) requires kitchen receptacles at every counter space wider than 12 inches and within 24 inches of each countertop space.' },
+    { type:'tf', q:'According to NEC 230.79, a single-family dwelling must have a service entrance with a rating of at least 100 amperes.', opts:['True','False'], ans:0, nec:'NEC 230.79(C)', exp:'True. NEC 230.79(C) requires a minimum 100-ampere, 3-wire service for a single-family dwelling.' },
+    { type:'mc', q:'What NEC article governs the installation of transformers?', opts:['Article 400','Article 450','Article 460','Article 480'], ans:1, nec:'NEC Article 450', exp:'NEC Article 450 covers the installation of all transformers except current transformers, dry-type transformers installed as a component part of equipment, and special applications.' },
+    { type:'mc', q:'Per NEC 300.5, direct-buried cables or raceways shall be installed at a minimum cover of ___ inches for residential branch circuits rated 120V or less.', opts:['6 inches','12 inches','18 inches','24 inches'], ans:1, nec:'NEC 300.5', exp:'NEC Table 300.5 requires a minimum 12-inch cover for residential branch circuits of 120V or less protected by GFCI.' },
+    { type:'tf', q:'GFCI protection is required for all 125V, 15A and 20A receptacles installed in bathrooms per NEC 210.8.', opts:['True','False'], ans:0, nec:'NEC 210.8', exp:'True. NEC 210.8(A)(1) requires GFCI protection for all receptacle outlets in bathrooms.' },
+    { type:'mc', q:'The maximum number of current-carrying conductors permitted in a conduit without derating is:', opts:['2','3','4','6'], ans:1, nec:'NEC 310.15(C)(1)', exp:'NEC 310.15(C)(1) requires derating when there are more than 3 current-carrying conductors in a raceway. Up to 3 conductors, no derating is required.' },
+  ],
+  ohm: [
+    { type:'mc', q:'A circuit has a resistance of 24 ohms and a current of 5 amperes. What is the voltage?', opts:['4.8 volts','120 volts','19 volts','29 volts'], ans:1, nec:'Ohm\'s Law: V=IR', exp:'Using Ohm\'s Law: V = I × R = 5A × 24Ω = 120 volts.' },
+    { type:'fill', q:'The formula for electrical power is P = ___ × R (using current).', ans:'I²', nec:'Power Formula', exp:'P = I² × R is the power formula when current and resistance are known. Also expressed as P = V × I or P = V²/R.' },
+    { type:'mc', q:'What is the resistance of a circuit with 240V applied and 20A flowing?', opts:['4800 ohms','12 ohms','4.8 ohms','260 ohms'], ans:1, nec:'Ohm\'s Law: R=V/I', exp:'R = V ÷ I = 240V ÷ 20A = 12 ohms.' },
+    { type:'mc', q:'Three resistors of 6Ω, 12Ω, and 4Ω are connected in series. What is the total resistance?', opts:['2Ω','22Ω','3Ω','12Ω'], ans:1, nec:'Series Circuits', exp:'In series: Rtotal = R1 + R2 + R3 = 6 + 12 + 4 = 22 ohms.' },
+    { type:'tf', q:'In a parallel circuit, the total resistance is always less than the smallest individual resistance.', opts:['True','False'], ans:0, nec:'Parallel Circuits', exp:'True. When resistors are in parallel, the total resistance is always less than the smallest individual resistor because each parallel path provides an additional path for current flow.' },
+    { type:'mc', q:'A motor draws 15 amperes at 240 volts. What is the approximate power consumption in watts?', opts:['16 watts','255 watts','3,600 watts','1,800 watts'], ans:2, nec:'Power Formula: P=V×I', exp:'P = V × I = 240V × 15A = 3,600 watts (or 3.6 kW).' },
+    { type:'mc', q:'Using the power triangle, if a load consumes 4,800 watts at 240V, what current flows?', opts:['10A','20A','1,152,000A','40A'], ans:1, nec:'P=VI solved for I', exp:'I = P ÷ V = 4,800W ÷ 240V = 20 amperes.' },
+    { type:'fill', q:'The unit of electrical resistance is the ___.', ans:'ohm', nec:'Basic Electricity', exp:'The ohm (Ω) is the SI unit of electrical resistance, named after Georg Simon Ohm.' },
+    { type:'mc', q:'Two 10-ohm resistors in parallel have a combined resistance of:', opts:['20 ohms','10 ohms','5 ohms','0.2 ohms'], ans:2, nec:'Parallel Resistance Formula', exp:'For two equal resistors in parallel: R = R/2 = 10/2 = 5 ohms. Or use 1/Rt = 1/R1 + 1/R2.' },
+    { type:'tf', q:'In a series circuit, the current is the same through every component.', opts:['True','False'], ans:0, nec:'Series Circuit Theory', exp:'True. In a series circuit, there is only one path for current to flow, so the same current flows through every component.' },
+  ],
+  safety: [
+    { type:'mc', q:'NFPA 70E requires an Energized Electrical Work Permit when the work involves exposure to electrical hazards greater than:', opts:['50 volts','120 volts','240 volts','480 volts'], ans:0, nec:'NFPA 70E 130.2', exp:'NFPA 70E 130.2 requires an Energized Electrical Work Permit for work on energized electrical conductors or equipment at 50 volts or greater.' },
+    { type:'tf', q:'Lockout/Tagout (LOTO) procedures are covered under OSHA 29 CFR 1910.147.', opts:['True','False'], ans:0, nec:'OSHA 29 CFR 1910.147', exp:'True. OSHA 29 CFR 1910.147 covers the control of hazardous energy (lockout/tagout) standards.' },
+    { type:'mc', q:'The minimum approach boundary where incidental contact with live parts operating at 480V is possible is called:', opts:['Arc Flash Boundary','Limited Approach Boundary','Restricted Approach Boundary','Prohibited Boundary'], ans:1, nec:'NFPA 70E Article 100', exp:'The Limited Approach Boundary is the distance at which the risk of incidental contact with live parts is possible. The Restricted Approach Boundary requires PPE.' },
+    { type:'mc', q:'Class I, Division 1 hazardous locations are areas where flammable gases or vapors are:', opts:['Present only during abnormal conditions','Present under normal operating conditions','Ignitable dusts exist under normal conditions','Easily ignitable fibers are present'], ans:1, nec:'NEC 501.5 / NFPA 70E', exp:'Class I, Division 1 locations are areas where flammable concentrations of gas or vapor exist under normal operating conditions, or where they may occur frequently during repair or maintenance.' },
+    { type:'tf', q:'Arc Flash PPE Category 2 requires a minimum arc rating of 8 cal/cm².', opts:['True','False'], ans:0, nec:'NFPA 70E Table 130.7(C)(15)(a)', exp:'True. PPE Category 2 requires a minimum arc rating of 8 cal/cm². Category 1 requires 4 cal/cm².' },
+    { type:'mc', q:'Before working on any circuit, which OSHA step comes LAST in the LOTO sequence?', opts:['De-energize the equipment','Apply locks and tags','Isolate energy sources','Verify absence of voltage'], ans:3, nec:'OSHA 29 CFR 1910.147', exp:'The correct LOTO sequence is: 1) Notify affected employees, 2) Identify energy sources, 3) Isolate, 4) De-energize, 5) Apply LOTO devices, 6) Release stored energy, 7) VERIFY absence of voltage.' },
+    { type:'mc', q:'What is the OSHA permissible noise exposure level for an 8-hour work shift?', opts:['85 dBA','90 dBA','95 dBA','100 dBA'], ans:1, nec:'OSHA 29 CFR 1910.95', exp:'OSHA 29 CFR 1910.95 sets the permissible exposure limit (PEL) at 90 dBA for an 8-hour work shift.' },
+    { type:'tf', q:'GFCIs are required for all 125V receptacles used in construction sites by OSHA.', opts:['True','False'], ans:0, nec:'OSHA 29 CFR 1926.404', exp:'True. OSHA 29 CFR 1926.404(b)(1) requires GFCI protection on all 120V, single-phase, 15A and 20A receptacle outlets on construction sites.' },
+  ],
+  motors: [
+    { type:'mc', q:'The nameplate of a 3-phase motor shows 10 HP, 230V. Using the approximate formula, what is the full-load amperage?', opts:['10A','14A','28A','56A'], ans:2, nec:'NEC Table 430.250', exp:'From NEC Table 430.250, a 10 HP, 230V, 3-phase motor has a full-load current of 28 amperes.' },
+    { type:'tf', q:'Motor overload protection must be set at no more than 125% of the motor\'s full-load current for a motor with a service factor of 1.15.', opts:['True','False'], ans:0, nec:'NEC 430.52(C)(1)', exp:'True. Per NEC 430.32(A)(1), overload devices must be set at no more than 125% of the nameplate full-load current for motors with a service factor of 1.15 or greater.' },
+    { type:'mc', q:'Which motor starter is used to reduce inrush current on large 3-phase motors by applying reduced voltage during starting?', opts:['Across-the-line starter','Star-delta starter','Direct-online starter','Single-phase starter'], ans:1, nec:'Motor Control Theory', exp:'Star-delta (wye-delta) starters reduce starting voltage and current to approximately 1/3 of across-the-line values, reducing mechanical and electrical stress during startup.' },
+    { type:'mc', q:'The branch circuit conductors supplying a single motor must have an ampacity of at least ___ of the motor full-load current.', opts:['100%','115%','125%','150%'], ans:2, nec:'NEC 430.22', exp:'NEC 430.22 requires motor branch circuit conductors to have an ampacity of not less than 125% of the motor\'s full-load current rating.' },
+    { type:'fill', q:'The NEC requires motor disconnecting means to be within ___ of the motor and within sight of the motor.', ans:'50 feet', nec:'NEC 430.102', exp:'NEC 430.102(B) requires the disconnecting means to be within sight of the controller location and within 50 feet of the motor.' },
+    { type:'tf', q:'A 3-phase motor rotating in the wrong direction can be corrected by swapping any two of the three line conductors.', opts:['True','False'], ans:0, nec:'Motor Theory', exp:'True. Swapping any two of the three phase leads (L1, L2, L3) will reverse the rotation of a 3-phase motor.' },
+    { type:'mc', q:'What does NEMA designation "NEMA 4X" on a motor control enclosure indicate?', opts:['Indoor use only','Waterproof and corrosion-resistant','Explosion-proof','Dust-tight only'], ans:1, nec:'NEMA Standards', exp:'NEMA 4X enclosures are constructed for both indoor and outdoor use, providing protection against windblown dust and rain, splashing water, and are corrosion-resistant.' },
+  ],
+  conduit: [
+    { type:'mc', q:'What is the shrink for a 30-degree bend in ½" EMT conduit?', opts:['3/16"','3/8"','1/2"','5/8"'], ans:1, nec:'Conduit Bending Math', exp:'The shrink for a 30-degree bend is 3/8" per inch of rise. For a ½" EMT conduit, the take-up for a 30° bend is typically 4 inches.' },
+    { type:'tf', q:'The maximum number of 90-degree bends allowed in a single conduit run between pull points is 4.', opts:['True','False'], ans:0, nec:'NEC 358.26', exp:'True. NEC 358.26 limits conduit to a maximum of 360 degrees total bends (equivalent to four 90-degree bends) between pull points.' },
+    { type:'mc', q:'When making an offset bend, what is the multiplier used to find the distance between bends for a 30-degree offset?', opts:['1.155','2.0','2.6','1.414'], ans:1, nec:'Conduit Offset Formula', exp:'For a 30-degree offset, the multiplier is 2.0. Multiply the desired rise by 2.0 to find the distance between the two bends.' },
+    { type:'mc', q:'What is the take-up (gain) for a 90-degree bend in ¾" rigid conduit?', opts:['4 inches','5 inches','6 inches','8 inches'], ans:2, nec:'Conduit Bending - Take Up', exp:'The take-up for ¾" rigid conduit for a 90-degree bend is typically 6 inches. Take-up (or gain) is the amount of conduit consumed by the bend.' },
+    { type:'fill', q:'For a saddle (three-point) bend, the center mark is placed at the ___ of the obstruction height.', ans:'center', nec:'Saddle Bend Technique', exp:'The center mark is placed at the center of the obstruction. The two outer marks are placed a calculated distance on either side based on the desired angle.' },
+    { type:'mc', q:'What is the minimum bend radius for 1" EMT conduit (to the inside of the bend)?', opts:['2 inches','3.5 inches','4 inches','6 inches'], ans:3, nec:'NEC 358.24 / Table 2', exp:'NEC 358.24 and Table 2 specify minimum bend radii. For 1" EMT, the minimum bend radius to the inside of the bend is approximately 5 inches, but the finished inside radius must be not less than 6× the internal diameter.' },
+  ],
+  grounding: [
+    { type:'mc', q:'What is the primary purpose of equipment grounding conductors (EGC)?', opts:['Reduce electrical noise','Carry fault current back to the source to operate overcurrent protection','Provide a neutral return path','Balance phase loads'], ans:1, nec:'NEC 250.4(A)(5)', exp:'The equipment grounding conductor provides a low-impedance fault current path to the source so overcurrent devices can operate and clear the fault, preventing dangerous voltages on metal enclosures.' },
+    { type:'tf', q:'A grounding electrode system may consist of multiple electrodes bonded together.', opts:['True','False'], ans:0, nec:'NEC 250.50', exp:'True. NEC 250.50 requires that all grounding electrodes present at a building be bonded together to form the grounding electrode system.' },
+    { type:'mc', q:'The main bonding jumper connects:', opts:['The neutral to the grounding electrode','The grounded service conductor to the equipment grounding conductor at the service','Two grounding electrodes together','The panel to the equipment'], ans:1, nec:'NEC 250.24(B)', exp:'The main bonding jumper connects the grounded conductor (neutral) to the equipment grounding conductor and the supply-side bonding jumper at the service disconnecting means.' },
+    { type:'mc', q:'What is the minimum size copper grounding electrode conductor required for a service with conductors of 2/0 AWG copper?', opts:['6 AWG','4 AWG','2 AWG','1/0 AWG'], ans:1, nec:'NEC Table 250.66', exp:'Per NEC Table 250.66, service conductors of 2/0 AWG copper require a minimum 4 AWG copper grounding electrode conductor.' },
+    { type:'tf', q:'The equipment grounding conductor (EGC) can be run separately from the circuit conductors.', opts:['True','False'], ans:1, nec:'NEC 250.134', exp:'False. NEC 250.134 requires the EGC to be contained within the same raceway or cable as the circuit conductors, or run with them.' },
+  ],
+};
+
+const TOPIC_INFO = [
+  { id:'nec', icon:'📗', title:'NEC Code References', desc:'Article numbers, code requirements, wiring methods, and inspection standards.' },
+  { id:'ohm', icon:'🔢', title:"Ohm's Law & Calculations", desc:'Voltage, current, resistance, power calculations, and circuit analysis.' },
+  { id:'safety', icon:'🦺', title:'OSHA / NFPA 70E Safety', desc:'PPE, arc flash, lockout/tagout, hazardous locations, and job site safety.' },
+  { id:'motors', icon:'⚙️', title:'Motor Controls', desc:'Motor starters, overloads, full-load current, disconnects, and NEC Article 430.' },
+  { id:'conduit', icon:'🔧', title:'Conduit Bending', desc:'Bend calculations, take-up, shrink, offsets, saddle bends, and NEC rules.' },
+  { id:'grounding', icon:'🌍', title:'Grounding & Bonding', desc:'Grounding electrode system, EGC sizing, bonding jumpers, and NEC Article 250.' },
+  { id:'load', icon:'⚡', title:'Load Calculations', desc:'Residential and commercial load calcs, demand factors, and service sizing.' },
+  { id:'wiring', icon:'🔌', title:'Wiring Methods', desc:'Cable types, conduit fill, ampacity tables, derating factors, and installation methods.' },
+];
+
+function buildTopicsGrid() {
+  const grid = document.getElementById('topicsGrid');
+  grid.innerHTML = '<div class="grid-2" style="gap:14px;">' +
+    TOPIC_INFO.map(t => `
+      <div class="card" style="cursor:pointer;transition:all 0.2s;" onmouseenter="this.style.borderColor='rgba(201,168,76,0.4)'" onmouseleave="this.style.borderColor='var(--border)'" onclick="startQuickQuiz('${t.id}')">
+        <div style="font-size:28px;margin-bottom:12px;">${t.icon}</div>
+        <div style="font-size:15px;font-weight:700;color:var(--cream);margin-bottom:6px;">${t.title}</div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:14px;">${t.desc}</div>
+        <button class="btn btn-secondary btn-sm btn-full">Start Quiz →</button>
+      </div>
+    `).join('') +
+  '</div>';
+}
+
+// ═══════════════════════════════════════
+// QUIZ GENERATION (AI + BUILT-IN)
+// ═══════════════════════════════════════
+function updateCheckbox(el) {
+  const label = el.closest('.checkbox-item');
+  label.classList.toggle('checked', el.checked);
+}
+
+async function generateQuiz() {
+  if (!state.apiKey && Object.keys(state.fileContents).length > 0) {
+    openModal('apiModal');
+    showToast('Please configure your Gemini API key first', 'error');
+    return;
+  }
+
+  const difficulty = document.getElementById('difficultySelect').value;
+  const qCount = parseInt(document.getElementById('questionCountSelect').value);
+  const focus = document.getElementById('focusTopicSelect').value;
+  const mode = document.getElementById('quizModeSelect').value;
+
+  const mcEnabled = document.querySelector('#chk-mc input').checked;
+  const tfEnabled = document.querySelector('#chk-tf input').checked;
+  const fillEnabled = document.querySelector('#chk-fill input').checked;
+  const shortEnabled = document.querySelector('#chk-short input').checked;
+
+  const enabledTypes = [mcEnabled&&'mc',tfEnabled&&'tf',fillEnabled&&'fill',shortEnabled&&'short'].filter(Boolean);
+  if (enabledTypes.length === 0) { showToast('Please select at least one question type', 'error'); return; }
+
+  showLoading('Generating your quiz…', 'Analyzing content with Gemini AI…');
+
+  try {
+    let questions;
+    const hasFileContent = Object.keys(state.fileContents).length > 0;
+
+    if (hasFileContent && state.apiKey) {
+      questions = await generateWithGemini(qCount, difficulty, focus, enabledTypes);
+    } else {
+      // Use built-in bank
+      questions = generateFromBank(focus, qCount, enabledTypes);
+      showToast('Using built-in question bank (no files uploaded or API key not set)', 'info');
+    }
+
+    if (mode === 'flashcards') {
+      loadFlashcards(questions);
+      navigate('flashcards');
+    } else if (mode === 'both') {
+      state.currentQuiz = questions;
+      loadFlashcards(questions);
+      startQuiz(questions);
+      navigate('quiz');
+    } else {
+      startQuiz(questions);
+      navigate('quiz');
+    }
+    showToast(`${questions.length} questions generated!`, 'success');
+  } catch (err) {
+    showToast('Quiz generation failed: ' + err.message, 'error');
+  } finally {
+    hideLoading();
+  }
+}
+
+function generateFromBank(topic, count, types) {
+  let bank = [];
+  if (topic === 'general' || topic === 'load' || topic === 'wiring') {
+    Object.values(QUESTION_BANKS).forEach(b => bank.push(...b));
+  } else if (QUESTION_BANKS[topic]) {
+    bank = [...QUESTION_BANKS[topic]];
+  } else {
+    Object.values(QUESTION_BANKS).forEach(b => bank.push(...b));
+  }
+  const filtered = bank.filter(q => types.includes(q.type));
+  const pool = filtered.length > 0 ? filtered : bank;
+  return shuffle(pool).slice(0, Math.min(count, pool.length));
+}
+
+async function generateWithGemini(count, difficulty, focus, types) {
+  const contents = Object.values(state.fileContents).join('\n\n---\n\n').slice(0, 12000);
+  const imageContents = Object.values(state.fileContents).filter(c => c.startsWith('IMAGE_DATA:'));
+
+  const typeDesc = types.map(t => ({mc:'multiple_choice',tf:'true_false',fill:'fill_in_blank',short:'short_answer'}[t])).join(', ');
+  const diffDesc = {year1:'1st year apprentice (basic fundamentals)',year2:'2nd year apprentice (intermediate)',year3:'3rd year apprentice (advanced)',year4:'4th year apprentice (pre-journeyman)',journeyman:'journeyman level (comprehensive)'}[difficulty];
+
+  const prompt = `You are an expert IBEW electrical instructor. Generate exactly ${count} quiz questions based on the provided study material.
+
+REQUIREMENTS:
+- Difficulty: ${diffDesc}
+- Focus area: ${focus === 'general' ? 'All electrical topics' : focus}
+- Question types to use: ${typeDesc}
+- Every question must be directly relevant to the electrical trade
+- Include NEC code references where applicable
+- Questions should mirror IBEW apprenticeship exam style
+
+CONTENT TO ANALYZE:
+${contents.slice(0, 10000)}
+
+OUTPUT FORMAT - respond with ONLY valid JSON array, no other text:
+[
+  {
+    "type": "mc",
+    "q": "Question text here?",
+    "opts": ["Option A", "Option B", "Option C", "Option D"],
+    "ans": 0,
+    "nec": "NEC 210.19 or relevant reference",
+    "exp": "Detailed explanation of the correct answer"
+  },
+  {
+    "type": "tf",
+    "q": "True/False question here.",
+    "opts": ["True", "False"],
+    "ans": 0,
+    "nec": "Reference",
+    "exp": "Explanation"
+  },
+  {
+    "type": "fill",
+    "q": "The minimum wire size for a 20A circuit is ___ AWG.",
+    "ans": "12",
+    "nec": "NEC 210.19",
+    "exp": "Explanation"
+  },
+  {
+    "type": "short",
+    "q": "Explain the purpose of a grounding electrode conductor.",
+    "ans": "Sample model answer for grading",
+    "nec": "NEC 250",
+    "exp": "Key points to cover"
+  }
+]
+
+Generate ${count} questions now:`;
+
+  const parts = [{ text: prompt }];
+  if (imageContents.length > 0) {
+    const img = imageContents[0];
+    const base64 = img.split(',')[1];
+    const mimeType = img.match(/data:([^;]+)/)?.[1] || 'image/jpeg';
+    parts.unshift({ inline_data: { mime_type: mimeType, data: base64 } });
+  }
+
+  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${state.apiKey}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ contents: [{ parts }] })
+  });
+
+  if (!response.ok) {
+    const err = await response.json();
+    throw new Error(err.error?.message || 'API error ' + response.status);
+  }
+
+  const data = await response.json();
+  const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  const jsonMatch = text.match(/\[[\s\S]*\]/);
+  if (!jsonMatch) throw new Error('Could not parse AI response');
+  return JSON.parse(jsonMatch[0]);
+}
+
+function startQuickQuiz(topic) {
+  const bank = generateFromBank(topic, 10, ['mc', 'tf', 'fill']);
+  startQuiz(bank);
+  navigate('quiz');
+}
+
+// ═══════════════════════════════════════
+// QUIZ ENGINE
+// ═══════════════════════════════════════
+function startQuiz(questions) {
+  state.currentQuiz = questions;
+  state.currentQuestion = 0;
+  state.answers = new Array(questions.length).fill(null);
+  state.timeElapsed = 0;
+  clearInterval(state.timerInterval);
+  state.timerInterval = setInterval(() => { state.timeElapsed++; updateTimer(); }, 1000);
+  renderQuiz();
+}
+
+function renderQuiz() {
+  const quiz = state.currentQuiz;
+  if (!quiz || quiz.length === 0) return;
+  const qi = state.currentQuestion;
+  const q = quiz[qi];
+  const circumference = 2 * Math.PI * 22;
+  const progress = (qi / quiz.length) * circumference;
+
+  const container = document.getElementById('quizContainer');
+  container.innerHTML = `
+    <div class="quiz-header">
+      <div class="quiz-progress-ring">
+        <svg width="52" height="52" viewBox="0 0 52 52">
+          <circle class="ring-bg" cx="26" cy="26" r="22"/>
+          <circle class="ring-fill" cx="26" cy="26" r="22"
+            stroke-dasharray="${circumference}"
+            stroke-dashoffset="${circumference - progress}"/>
+        </svg>
+        <div class="ring-text">${qi+1}/${quiz.length}</div>
+      </div>
+      <div class="quiz-meta">
+        <div class="quiz-q-label">Question</div>
+        <div class="quiz-q-count">${qi+1} of ${quiz.length}</div>
+      </div>
+      <div class="quiz-timer" id="quizTimer">⏱ 0:00</div>
+      <button class="btn btn-ghost btn-sm" onclick="abandonQuiz()">✕ End Quiz</button>
+    </div>
+
+    <div class="quiz-card">
+      <div class="question-type-badge">
+        ${q.type==='mc'?'<span class="badge badge-blue">Multiple Choice</span>':
+          q.type==='tf'?'<span class="badge badge-gold">True / False</span>':
+          q.type==='fill'?'<span class="badge badge-green">Fill in the Blank</span>':
+          '<span class="badge badge-muted">Short Answer</span>'}
+      </div>
+      ${q.nec ? `<div class="question-nec">📖 ${escHtml(q.nec)}</div>` : ''}
+      <div class="question-text">${escHtml(q.q)}</div>
+      <div id="answerArea">${renderAnswerArea(q, qi)}</div>
+      <div class="answer-feedback" id="answerFeedback"></div>
+    </div>
+
+    <div class="quiz-nav">
+      <button class="btn btn-secondary" onclick="prevQuestion()" ${qi === 0 ? 'disabled' : ''}>← Previous</button>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;">
+        ${quiz.map((_,i) => `<div style="width:8px;height:8px;border-radius:50%;background:${
+          state.answers[i]!==null?'var(--gold)':i===qi?'var(--text)':'var(--border)'
+        };cursor:pointer;" onclick="jumpToQuestion(${i})"></div>`).join('')}
+      </div>
+      <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">
+        ${qi === quiz.length - 1 ? '🏁 Finish Quiz' : 'Next →'}
+      </button>
+    </div>
+  `;
+}
+
+function renderAnswerArea(q, qi) {
+  if (q.type === 'mc') {
+    return `<div class="options-list">${(q.opts||[]).map((o,i) =>
+      `<button class="option-item" onclick="selectOption(${i})" id="opt_${i}">
+        <span class="option-letter">${String.fromCharCode(65+i)}</span>${escHtml(o)}
+      </button>`
+    ).join('')}</div>`;
+  } else if (q.type === 'tf') {
+    return `<div class="tf-options">
+      <button class="tf-btn" onclick="selectTF(0)" id="tf_0">✔ True</button>
+      <button class="tf-btn" onclick="selectTF(1)" id="tf_1">✘ False</button>
+    </div>`;
+  } else if (q.type === 'fill') {
+    return `<input class="fill-blank-input" id="fillInput" type="text" placeholder="Type your answer…" onkeydown="if(event.key==='Enter')nextQuestion()">`;
+  } else {
+    return `<textarea class="short-answer-textarea" id="shortInput" placeholder="Write your answer here…"></textarea>`;
+  }
+}
+
+function selectOption(idx) {
+  const qi = state.currentQuestion;
+  state.answers[qi] = idx;
+  const q = state.currentQuiz[qi];
+  document.querySelectorAll('.option-item').forEach((el, i) => {
+    el.classList.remove('selected','correct','incorrect');
+    el.querySelector('.option-letter').style.background = '';
+    if (i === idx) el.classList.add('selected');
+  });
+  showFeedback(q, idx);
+}
+
+function selectTF(idx) {
+  const qi = state.currentQuestion;
+  state.answers[qi] = idx;
+  const q = state.currentQuiz[qi];
+  document.querySelectorAll('.tf-btn').forEach((el, i) => {
+    el.classList.remove('selected','correct','incorrect');
+    if (i === idx) el.classList.add('selected');
+  });
+  showFeedback(q, idx);
+}
+
+function showFeedback(q, selected) {
+  const fb = document.getElementById('answerFeedback');
+  if (!fb || !document.getElementById('toggleExplain')?.checked) return;
+  const correct = selected === q.ans;
+  fb.className = 'answer-feedback shown ' + (correct ? 'correct' : 'incorrect');
+  fb.innerHTML = correct
+    ? `✅ <strong>Correct!</strong> ${q.exp ? escHtml(q.exp) : ''}`
+    : `❌ <strong>Incorrect.</strong> The correct answer is <strong>${
+        q.opts ? escHtml(q.opts[q.ans]) : escHtml(q.ans)
+      }</strong>. ${q.exp ? escHtml(q.exp) : ''}`;
+}
+
+function nextQuestion() {
+  const qi = state.currentQuestion;
+  const q = state.currentQuiz[qi];
+
+  if (q.type === 'fill') {
+    const val = document.getElementById('fillInput')?.value.trim();
+    state.answers[qi] = val || null;
+  } else if (q.type === 'short') {
+    const val = document.getElementById('shortInput')?.value.trim();
+    state.answers[qi] = val || null;
+  } else if (q.type === 'mc' || q.type === 'tf') {
+    if (state.answers[qi] === null) {
+      showToast('Please select an answer', 'info');
+      return;
+    }
+  }
+
+  if (qi === state.currentQuiz.length - 1) {
+    finishQuiz();
+  } else {
+    state.currentQuestion++;
+    renderQuiz();
+  }
+}
+
+function prevQuestion() {
+  if (state.currentQuestion > 0) {
+    state.currentQuestion--;
+    renderQuiz();
+  }
+}
+
+function jumpToQuestion(i) {
+  state.currentQuestion = i;
+  renderQuiz();
+}
+
+function updateTimer() {
+  const el = document.getElementById('quizTimer');
+  if (!el) return;
+  const m = Math.floor(state.timeElapsed / 60);
+  const s = state.timeElapsed % 60;
+  el.textContent = `⏱ ${m}:${s.toString().padStart(2,'0')}`;
+}
+
+function abandonQuiz() {
+  clearInterval(state.timerInterval);
+  state.currentQuiz = null;
+  navigate('dashboard');
+  showToast('Quiz ended', 'info');
+}
+
+function finishQuiz() {
+  clearInterval(state.timerInterval);
+  const quiz = state.currentQuiz;
+  let correct = 0;
+  quiz.forEach((q, i) => {
+    if (q.type === 'mc' || q.type === 'tf') {
+      if (state.answers[i] === q.ans) correct++;
+    } else if (q.type === 'fill') {
+      const userAns = (state.answers[i] || '').toString().toLowerCase().trim();
+      const correct_ans = q.ans.toString().toLowerCase().trim();
+      if (userAns === correct_ans || userAns.includes(correct_ans)) correct++;
+    } else {
+      // Short answer — give credit if answered
+      if (state.answers[i] && state.answers[i].length > 10) correct++;
+    }
+  });
+
+  const pct = Math.round((correct / quiz.length) * 100);
+  const session = {
+    id: Date.now(),
+    date: new Date().toISOString(),
+    topic: 'Custom Quiz',
+    total: quiz.length,
+    correct,
+    pct,
+    timeElapsed: state.timeElapsed
+  };
+  state.sessions.unshift(session);
+  localStorage.setItem('voltage_sessions', JSON.stringify(state.sessions));
+  renderResults(session, quiz);
+}
+
+function renderResults(session, quiz) {
+  const grade = session.pct >= 90?'A':session.pct>=80?'B':session.pct>=70?'C':session.pct>=60?'D':'F';
+  const gradeColor = session.pct>=70?'var(--success-light)':session.pct>=60?'var(--gold)':'var(--error-light)';
+  const msg = session.pct>=90?'Outstanding work! You nailed it! 🔥':session.pct>=80?'Great job! Keep it up!':session.pct>=70?'Passing grade. Review missed topics.':session.pct>=60?'Close — more study needed.':'Back to the books. You\'ve got this.';
+  const min = Math.floor(session.timeElapsed/60), sec = session.timeElapsed%60;
+
+  const container = document.getElementById('quizContainer');
+  container.innerHTML = `
+    <div class="results-hero">
+      <div class="score-circle" style="--pct:${session.pct}">
+        <div class="score-circle-inner">
+          <div class="score-pct">${session.pct}%</div>
+          <div class="score-label">SCORE</div>
+        </div>
+      </div>
+      <div class="results-grade" style="color:${gradeColor}">Grade: ${grade}</div>
+      <div class="results-message">${msg}</div>
+      <div class="results-stats">
+        <div class="results-stat"><div class="results-stat-val" style="color:var(--success-light)">${session.correct}</div><div class="results-stat-label">Correct</div></div>
+        <div class="results-stat"><div class="results-stat-val" style="color:var(--error-light)">${session.total-session.correct}</div><div class="results-stat-label">Incorrect</div></div>
+        <div class="results-stat"><div class="results-stat-val">${session.total}</div><div class="results-stat-label">Total</div></div>
+        <div class="results-stat"><div class="results-stat-val">${min}:${sec.toString().padStart(2,'0')}</div><div class="results-stat-label">Time</div></div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;">
+      <button class="btn btn-primary" onclick="startQuiz(state.currentQuiz)">🔁 Retake Quiz</button>
+      <button class="btn btn-secondary" onclick="navigate('upload')">📁 New Quiz</button>
+      <button class="btn btn-secondary" onclick="navigate('dashboard')">🏠 Dashboard</button>
+      <button class="btn btn-secondary" onclick="navigate('progress')">📊 View Progress</button>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">📋 Question Review</div>
+      </div>
+      <div class="review-list">
+        ${quiz.map((q, i) => {
+          const isCorrect = q.type==='mc'||q.type==='tf'
+            ? state.answers[i]===q.ans
+            : q.type==='fill'
+              ? (state.answers[i]||'').toString().toLowerCase().includes(q.ans.toString().toLowerCase())
+              : !!(state.answers[i]&&state.answers[i].length>10);
+          const userAnswer = q.type==='mc'||q.type==='tf'
+            ? (q.opts?.[state.answers[i]]||'Not answered')
+            : (state.answers[i]||'Not answered');
+          const correctAnswer = q.type==='mc'||q.type==='tf'
+            ? q.opts?.[q.ans] : q.ans;
+          return `
+            <div class="review-item ${isCorrect?'correct-item':'incorrect-item'}">
+              <div class="review-q">${i+1}. ${escHtml(q.q)}</div>
+              <div class="review-answer">
+                Your answer: <strong>${escHtml(userAnswer)}</strong>
+                ${!isCorrect ? ` · Correct: <strong style="color:var(--success-light)">${escHtml(correctAnswer)}</strong>` : ' <span style="color:var(--success-light)">✓</span>'}
+              </div>
+              ${q.exp ? `<div style="font-size:12px;color:var(--muted);margin-top:6px;">${escHtml(q.exp)}</div>` : ''}
+            </div>`;
+        }).join('')}
+      </div>
+    </div>
+  `;
+  renderDashboard();
+}
+
+// ═══════════════════════════════════════
+// FLASHCARDS
+// ═══════════════════════════════════════
+function loadFlashcards(questions) {
+  state.currentFlashcards = questions;
+  state.currentCardIndex = 0;
+  state.cardKnown = new Array(questions.length).fill(null);
+  renderFlashcards();
+}
+
+function renderFlashcards() {
+  const cards = state.currentFlashcards;
+  if (!cards || cards.length === 0) return;
+  const i = state.currentCardIndex;
+  const c = cards[i];
+
+  const question = c.q;
+  const answer = c.type === 'mc' ? `${c.opts?.[c.ans] || c.ans}` : c.ans;
+
+  const container = document.getElementById('flashcardContainer');
+  container.innerHTML = `
+    <div class="flashcard-wrap">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+        <div class="section-title" style="font-size:17px;">Flashcard Review</div>
+        <div class="flex gap-8">
+          <button class="btn btn-secondary btn-sm" onclick="navigate('quiz');startQuiz(state.currentFlashcards)">Switch to Quiz Mode</button>
+          <button class="btn btn-ghost btn-sm" onclick="navigate('dashboard')">✕ Exit</button>
+        </div>
+      </div>
+
+      <div class="flashcard-container" onclick="flipCard()">
+        <div class="flashcard" id="flashcard">
+          <div class="card-face card-front">
+            <div class="card-face-label">❓ Question ${i+1} of ${cards.length}</div>
+            <div class="card-text">${escHtml(question)}</div>
+            ${c.nec ? `<div class="card-nec">📖 ${escHtml(c.nec)}</div>` : ''}
+            <div class="card-hint">Tap to reveal answer</div>
+          </div>
+          <div class="card-face card-back">
+            <div class="card-face-label back">✅ Answer</div>
+            <div class="card-text">${escHtml(answer)}</div>
+            ${c.exp ? `<div class="card-hint" style="margin-top:16px;font-size:12px;color:var(--muted);">${escHtml(c.exp.slice(0,120))}${c.exp.length>120?'…':''}</div>` : ''}
+          </div>
+        </div>
+      </div>
+
+      <div class="flashcard-controls">
+        <button class="btn btn-danger btn-sm" onclick="markCard(false)">✘ Still Learning</button>
+        <div class="fc-nav">
+          <button class="btn btn-icon btn-secondary" onclick="prevCard()" ${i===0?'disabled':''}>←</button>
+          <span class="fc-counter">${i+1} / ${cards.length}</span>
+          <button class="btn btn-icon btn-secondary" onclick="nextCard()" ${i===cards.length-1?'disabled':''}>→</button>
+        </div>
+        <button class="btn btn-secondary btn-sm" style="border-color:rgba(74,222,128,0.4);color:var(--success-light);" onclick="markCard(true)">✓ Got It</button>
+      </div>
+
+      <div class="fc-progress" id="fcProgress">
+        ${cards.map((_,j) => `<div class="fc-dot ${j===i?'current':state.cardKnown[j]===true?'known':state.cardKnown[j]===false?'unknown':''}" id="fcd_${j}"></div>`).join('')}
+      </div>
+
+      <div style="text-align:center;margin-top:16px;">
+        <span class="badge badge-green">✓ ${state.cardKnown.filter(k=>k===true).length} Known</span>
+        <span style="margin:0 6px;"></span>
+        <span class="badge badge-red">✘ ${state.cardKnown.filter(k=>k===false).length} Learning</span>
+        <span style="margin:0 6px;"></span>
+        <span class="badge badge-muted">— ${state.cardKnown.filter(k=>k===null).length} Unseen</span>
+      </div>
+    </div>
+  `;
+}
+
+function flipCard() {
+  document.getElementById('flashcard')?.classList.toggle('flipped');
+}
+
+function nextCard() {
+  if (state.currentCardIndex < state.currentFlashcards.length - 1) {
+    state.currentCardIndex++;
+    renderFlashcards();
+  }
+}
+
+function prevCard() {
+  if (state.currentCardIndex > 0) {
+    state.currentCardIndex--;
+    renderFlashcards();
+  }
+}
+
+function markCard(known) {
+  state.cardKnown[state.currentCardIndex] = known;
+  if (state.currentCardIndex < state.currentFlashcards.length - 1) {
+    state.currentCardIndex++;
+  }
+  renderFlashcards();
+  // Show completion if all marked
+  const all = state.cardKnown.every(k => k !== null);
+  if (all) {
+    const known_count = state.cardKnown.filter(k=>k===true).length;
+    showToast(`Done! ${known_count}/${state.currentFlashcards.length} known ⚡`, 'success');
+  }
+}
+
+// ═══════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════
+function renderDashboard() {
+  const sessions = state.sessions;
+  document.getElementById('statQuizzes').textContent = sessions.length;
+  document.getElementById('statFiles').textContent = state.uploadedFiles.length;
+  if (sessions.length > 0) {
+    const recent = sessions.slice(0,5);
+    const avg = Math.round(recent.reduce((a,s) => a+s.pct, 0) / recent.length);
+    document.getElementById('statAvgScore').textContent = avg + '%';
+  }
+  // Streak calc
+  const today = new Date().toDateString();
+  let streak = 0;
+  const sessionDays = [...new Set(sessions.map(s => new Date(s.date).toDateString()))];
+  let checkDay = new Date();
+  for (let i=0;i<30;i++) {
+    if (sessionDays.includes(checkDay.toDateString())) { streak++; checkDay.setDate(checkDay.getDate()-1); }
+    else if (i===0) { break; }
+    else break;
+  }
+  document.getElementById('statStreak').textContent = streak;
+
+  // Recent sessions
+  const list = document.getElementById('dashboardSessionList');
+  if (sessions.length === 0) {
+    list.innerHTML = `<div class="empty-state" style="padding:24px;"><span class="empty-icon">📊</span><div class="empty-title">No sessions yet</div><div class="empty-desc">Complete a quiz to see your scores here</div></div>`;
+  } else {
+    list.innerHTML = sessions.slice(0,4).map(s => {
+      const cls = s.pct>=80?'high':s.pct>=60?'mid':'low';
+      return `<div class="session-item">
+        <div class="session-score-badge ${cls}">${s.pct}%</div>
+        <div class="session-info">
+          <div class="session-name">${escHtml(s.topic)}</div>
+          <div class="session-date">${new Date(s.date).toLocaleDateString()} · ${s.correct}/${s.total} correct</div>
+        </div>
+        <span class="badge ${s.pct>=70?'badge-green':'badge-red'}">${s.pct>=70?'Pass':'Review'}</span>
+      </div>`;
+    }).join('');
+  }
+  renderDashboardFiles();
+}
+
+function renderDashboardFiles() {
+  const list = document.getElementById('dashboardFileList');
+  if (!list) return;
+  if (state.uploadedFiles.length === 0) {
+    list.innerHTML = `<div class="empty-state" style="padding:24px;"><span class="empty-icon">📂</span><div class="empty-title">No files yet</div><div class="empty-desc">Upload PDFs, images, or documents to generate custom quizzes</div></div>`;
+  } else {
+    list.innerHTML = state.uploadedFiles.slice(0,4).map(f =>
+      `<div class="flex-center gap-8 mt-8" style="padding:8px 0;border-bottom:1px solid var(--border);">
+        <span>${getFileIcon(f.type)}</span>
+        <div style="flex:1;min-width:0;"><div style="font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escHtml(f.name)}</div><div style="font-size:11px;color:var(--muted);">${formatBytes(f.size)}</div></div>
+      </div>`
+    ).join('');
+  }
+}
+
+// ═══════════════════════════════════════
+// PROGRESS
+// ═══════════════════════════════════════
+function renderProgress() {
+  const sessions = state.sessions;
+  document.getElementById('pStatQuizzes').textContent = sessions.length;
+  document.getElementById('pStatQuestions').textContent = sessions.reduce((a,s)=>a+s.total,0);
+  if (sessions.length > 0) {
+    const best = Math.max(...sessions.map(s=>s.pct));
+    const avg = Math.round(sessions.reduce((a,s)=>a+s.pct,0)/sessions.length);
+    document.getElementById('pStatBest').textContent = best + '%';
+    document.getElementById('pStatAvg').textContent = avg + '%';
+  }
+
+  // Chart
+  const ctx = document.getElementById('progressChart').getContext('2d');
+  if (state.progressChart) state.progressChart.destroy();
+  const chartData = sessions.slice(0,10).reverse();
+  state.progressChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: chartData.map((_,i) => `Quiz ${i+1}`),
+      datasets: [{
+        label: 'Score %',
+        data: chartData.map(s=>s.pct),
+        borderColor: '#c9a84c',
+        backgroundColor: 'rgba(201,168,76,0.1)',
+        tension: 0.4,
+        fill: true,
+        pointBackgroundColor: '#c9a84c',
+        pointRadius: 5,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { min: 0, max: 100, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#6b7a99' } },
+        x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#6b7a99' } }
+      }
+    }
+  });
+
+  // Session list
+  const list = document.getElementById('progressSessionList');
+  if (sessions.length === 0) {
+    list.innerHTML = `<div class="empty-state"><span class="empty-icon">📊</span><div class="empty-title">No sessions recorded</div><div class="empty-desc">Complete a quiz to start tracking your progress</div></div>`;
+    return;
+  }
+  list.innerHTML = sessions.map(s => {
+    const cls = s.pct>=80?'high':s.pct>=60?'mid':'low';
+    const m = Math.floor(s.timeElapsed/60), sec = s.timeElapsed%60;
+    return `<div class="session-item">
+      <div class="session-score-badge ${cls}">${s.pct}%</div>
+      <div class="session-info">
+        <div class="session-name">${escHtml(s.topic)}</div>
+        <div class="session-date">${new Date(s.date).toLocaleString()} · ${s.correct}/${s.total} correct · ${m}:${sec.toString().padStart(2,'0')}</div>
+      </div>
+      <span class="badge ${s.pct>=70?'badge-green':s.pct>=60?'badge-gold':'badge-red'}">${s.pct}%</span>
+    </div>`;
+  }).join('');
+}
+
+function clearProgress() {
+  if (!confirm('Clear all session history? This cannot be undone.')) return;
+  state.sessions = [];
+  localStorage.removeItem('voltage_sessions');
+  renderDashboard();
+  renderProgress();
+  showToast('Progress cleared', 'info');
+}
+
+// ═══════════════════════════════════════
+// SETTINGS
+// ═══════════════════════════════════════
+function saveApiKey() {
+  const key = document.getElementById('apiKeyInput').value.trim();
+  if (!key) { showToast('Please enter a valid API key', 'error'); return; }
+  state.apiKey = key;
+  localStorage.setItem('voltage_api_key', key);
+  closeModal('apiModal');
+  updateApiKeyStatus();
+  showToast('API key saved!', 'success');
+}
+
+function updateApiKeyStatus() {
+  const el = document.getElementById('apiKeyStatus');
+  if (!el) return;
+  if (state.apiKey) {
+    el.className = 'badge badge-green';
+    el.textContent = '✓ Configured';
+    document.getElementById('apiKeyInput').value = state.apiKey;
+  } else {
+    el.className = 'badge badge-muted';
+    el.textContent = 'Not Set';
+  }
+}
+
+function updateYear() {
+  const year = document.getElementById('yearSelect').value;
+  state.year = year;
+  localStorage.setItem('voltage_year', year);
+  document.getElementById('sidebarUserRole').textContent = year;
+  document.getElementById('topbarYearBadge').textContent = year;
+  document.getElementById('difficultySelect').value = {
+    'Year 1':'year1','Year 2':'year2','Year 3':'year3','Year 4':'year4','Journeyman':'journeyman'
+  }[year] || 'year1';
+  showToast('Year updated to ' + year, 'success');
+}
+
+// ═══════════════════════════════════════
+// MODALS
+// ═══════════════════════════════════════
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+});
+
+// ═══════════════════════════════════════
+// LOADING
+// ═══════════════════════════════════════
+function showLoading(text, sub) {
+  document.getElementById('loadingOverlay').style.display = 'flex';
+  document.getElementById('loadingText').textContent = text || 'Loading…';
+  document.getElementById('loadingSub').textContent = sub || '';
+}
+function hideLoading() { document.getElementById('loadingOverlay').style.display = 'none'; }
+
+// ═══════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════
+function showToast(msg, type='info') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  const icon = type==='success'?'✅':type==='error'?'❌':'ℹ️';
+  toast.innerHTML = `<span>${icon}</span><span>${escHtml(msg)}</span>`;
+  container.appendChild(toast);
+  toast.addEventListener('click', () => toast.remove());
+  setTimeout(() => { toast.style.opacity='0'; toast.style.transform='translateX(20px)'; toast.style.transition='all 0.3s'; setTimeout(()=>toast.remove(),300); }, 3500);
+}
+
+// ═══════════════════════════════════════
+// UTILITIES
+// ═══════════════════════════════════════
+function escHtml(s) {
+  if (typeof s !== 'string') s = String(s||'');
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length-1; i>0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+// ═══════════════════════════════════════
+// KEYBOARD SHORTCUTS
+// ═══════════════════════════════════════
+document.addEventListener('keydown', e => {
+  if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return;
+  if (e.key === 'ArrowRight' || e.key === 'n') {
+    const nextBtn = document.getElementById('nextBtn');
+    if (nextBtn && !nextBtn.disabled) nextBtn.click();
+  }
+  if (e.key === 'ArrowLeft' || e.key === 'p') prevQuestion();
+  if (e.key === ' ') {
+    const fc = document.getElementById('flashcard');
+    if (fc) { e.preventDefault(); flipCard(); }
+  }
+  if (e.key >= '1' && e.key <= '4') {
+    const idx = parseInt(e.key) - 1;
+    const opt = document.getElementById('opt_' + idx);
+    if (opt) opt.click();
+  }
+  if (e.key === 't') { const tf0 = document.getElementById('tf_0'); if (tf0) tf0.click(); }
+  if (e.key === 'f') { const tf1 = document.getElementById('tf_1'); if (tf1) tf1.click(); }
+});
+
+// ═══════════════════════════════════════
+// CHECK FOR SAVED SESSION
+// ═══════════════════════════════════════
+const savedUser = localStorage.getItem('voltage_user');
+if (savedUser) {
+  try {
+    const user = JSON.parse(savedUser);
+    state.user = user;
+    loginSuccess(user);
+  } catch(e) { /* fresh start */ }
+}
+
+init();
+</script>
+</body>
+</html>
