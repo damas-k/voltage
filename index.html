@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head><base href="https://d16ilfvy4mv02r.cloudfront.net/workspaces/nOgJTaQ215ufUbMUz9IuxmyyyuVtyWbs/b1d63d15-6cc7-47b5-862e-e53e5f1a82de/files/">
@@ -6,6 +7,7 @@
 <title>Voltage — IBEW Study Tool by Damask Holdings</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
   :root {
     --navy: #0a1628;
@@ -1398,6 +1400,8 @@
       </svg>
       Continue with Google
     </button>
+    <!-- Hidden container for GIS rendered button (popup fallback) -->
+    <div id="gsi-button-container" style="position:absolute;opacity:0;pointer-events:none;height:0;overflow:hidden;"></div>
     <div class="login-footer">
       By signing in, you agree to use this tool responsibly.<br>
       Study hard. Work safe. Know the code.
@@ -1892,18 +1896,68 @@ function init() {
 // ═══════════════════════════════════════
 // AUTH
 // ═══════════════════════════════════════
-const DEMO_USERS = [
-  { name: 'Alex Rivera', email: 'a.rivera@ibew.local', initials: 'AR' },
-  { name: 'Jordan Cole', email: 'j.cole@ibew.local', initials: 'JC' },
-  { name: 'Morgan Shaw', email: 'm.shaw@ibew.local', initials: 'MS' },
-];
+// ─── Google Identity Services (GIS) Auth ───
+const GOOGLE_CLIENT_ID = '382864329081-jnijbupd92gt42uvn6chntcodqj2sjim.apps.googleusercontent.com';
+
+function initGoogleSignIn() {
+  if (typeof google === 'undefined' || !google.accounts) {
+    // GIS not yet loaded — retry once the script is ready
+    setTimeout(initGoogleSignIn, 300);
+    return;
+  }
+  google.accounts.id.initialize({
+    client_id: GOOGLE_CLIENT_ID,
+    callback: handleGISCredentialResponse,
+    auto_select: false,
+    cancel_on_tap_outside: true,
+  });
+}
 
 function handleGoogleSignIn() {
-  const user = DEMO_USERS[Math.floor(Math.random() * DEMO_USERS.length)];
-  user.year = state.year;
-  state.user = user;
-  localStorage.setItem('voltage_user', JSON.stringify(user));
-  loginSuccess(user);
+  if (typeof google === 'undefined' || !google.accounts) {
+    showToast('Google Sign-In is loading, please try again in a moment.', 'error');
+    return;
+  }
+  google.accounts.id.prompt((notification) => {
+    if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+      // One-Tap was suppressed — fall back to the popup flow
+      google.accounts.oauth2 && google.accounts.oauth2.initTokenClient ? void 0 : void 0;
+      // Render a hidden button and click it to trigger the full OAuth popup
+      const container = document.getElementById('gsi-button-container');
+      google.accounts.id.renderButton(container, {
+        type: 'standard', theme: 'outline', size: 'large', width: 340
+      });
+      const btn = container.querySelector('div[role=button]') || container.firstElementChild;
+      if (btn) btn.click();
+    }
+  });
+}
+
+function handleGISCredentialResponse(response) {
+  try {
+    const token = response.credential;
+    // Decode JWT payload (base64url)
+    const parts = token.split('.');
+    if (parts.length !== 3) throw new Error('Invalid JWT');
+    const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
+
+    const user = {
+      name:    payload.name   || payload.email.split('@')[0],
+      email:   payload.email  || '',
+      picture: payload.picture || '',
+      sub:     payload.sub    || '',
+    };
+
+    // Persist credential token
+    localStorage.setItem('voltage_token', token);
+    localStorage.setItem('voltage_user',  JSON.stringify(user));
+
+    state.user = user;
+    loginSuccess(user);
+  } catch(err) {
+    console.error('GIS credential parse error:', err);
+    showToast('Sign-in failed — please try again.', 'error');
+  }
 }
 
 function loginSuccess(user) {
@@ -1911,7 +1965,15 @@ function loginSuccess(user) {
   document.getElementById('view-app').classList.add('active');
   document.getElementById('sidebarUserName').textContent = user.name;
   document.getElementById('sidebarUserRole').textContent = state.year;
-  document.getElementById('sidebarAvatar').textContent = user.name.charAt(0);
+
+  // Show real Google profile photo or fall back to initial letter
+  const avatarEl = document.getElementById('sidebarAvatar');
+  if (user.picture) {
+    avatarEl.innerHTML = `<img src="${user.picture}" alt="${user.name}" referrerpolicy="no-referrer">`;
+  } else {
+    avatarEl.textContent = user.name.charAt(0).toUpperCase();
+  }
+
   document.getElementById('dashboardName').textContent = user.name.split(' ')[0];
   document.getElementById('settingsEmail').textContent = user.email;
   document.getElementById('topbarYearBadge').textContent = state.year;
@@ -1921,7 +1983,13 @@ function loginSuccess(user) {
 }
 
 function signOut() {
+  // Revoke Google session so One-Tap won't auto-reselect
+  if (typeof google !== 'undefined' && google.accounts && state.user && state.user.email) {
+    google.accounts.id.revoke(state.user.email, () => {});
+  }
   state.user = null;
+  localStorage.removeItem('voltage_token');
+  localStorage.removeItem('voltage_user');
   document.getElementById('view-app').classList.remove('active');
   document.getElementById('view-login').classList.add('active');
   showToast('Signed out successfully', 'info');
@@ -2967,16 +3035,45 @@ document.addEventListener('keydown', e => {
 });
 
 // ═══════════════════════════════════════
-// CHECK FOR SAVED SESSION
+// GOOGLE SIGN-IN INIT
 // ═══════════════════════════════════════
-const savedUser = localStorage.getItem('voltage_user');
-if (savedUser) {
+// Kick off GIS initialisation as soon as the script has loaded
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initGoogleSignIn);
+} else {
+  initGoogleSignIn();
+}
+
+// ═══════════════════════════════════════
+// AUTO-LOGIN: CHECK FOR SAVED TOKEN
+// ═══════════════════════════════════════
+(function checkSavedSession() {
+  const token   = localStorage.getItem('voltage_token');
+  const rawUser = localStorage.getItem('voltage_user');
+  if (!token || !rawUser) return;
+
   try {
-    const user = JSON.parse(savedUser);
+    // Validate the JWT is not expired
+    const parts   = token.split('.');
+    const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
+    const now     = Math.floor(Date.now() / 1000);
+
+    if (payload.exp && payload.exp < now) {
+      // Token expired — clear and stay on login screen
+      localStorage.removeItem('voltage_token');
+      localStorage.removeItem('voltage_user');
+      return;
+    }
+
+    const user = JSON.parse(rawUser);
     state.user = user;
     loginSuccess(user);
-  } catch(e) { /* fresh start */ }
-}
+  } catch(e) {
+    // Corrupted data — start fresh
+    localStorage.removeItem('voltage_token');
+    localStorage.removeItem('voltage_user');
+  }
+})();
 
 init();
 </script>
