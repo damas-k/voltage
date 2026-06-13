@@ -686,6 +686,8 @@
       <div class="sidebar-tagline">IBEW Study Tool</div>
     </div>
     <nav class="sidebar-nav">
+      <div class="nav-section-label" style="text-shadow:0 0 8px rgba(201,168,76,0.8),0 0 16px rgba(201,168,76,0.4);color:var(--gold);letter-spacing:0.2em;font-size:11px;font-weight:700;">GUIDE</div>
+      <div class="nav-item" onclick="navigate('guide')" data-page="guide"><span class="nav-icon">📘</span> Guide</div>
       <div class="nav-section-label">Study</div>
       <div class="nav-item active" onclick="navigate('dashboard')" data-page="dashboard"><span class="nav-icon">🏠</span> Dashboard</div>
       <div class="nav-item" onclick="navigate('upload')" data-page="upload"><span class="nav-icon">📁</span> Upload Materials</div>
@@ -721,6 +723,7 @@
         <div class="topbar-title" id="topbarTitle">Dashboard</div>
       </div>
       <div class="topbar-actions">
+        <span class="badge badge-red" id="rateLimitBadge" style="display:none;cursor:default;" title="Rate limits disabled — API quota burns fast!">⚡ Limits OFF</span>
         <button class="btn btn-secondary btn-sm" onclick="openModal('apiModal')" title="API Settings">⚙️ API Key</button>
         <div class="badge badge-gold" id="topbarYearBadge">Year 1</div>
       </div>
@@ -864,8 +867,27 @@
           </div>
           <div class="settings-section">
             <div class="settings-section-title">Backup &amp; Restore</div>
+            <div style="background:var(--card);border:1px solid var(--border);border-left:4px solid var(--gold);border-radius:var(--radius);padding:14px 16px;margin-bottom:16px;">
+              <div style="font-size:13px;color:var(--text);line-height:1.6;">💾 <strong>Your progress, notes, and wrong answers are saved to your browser only.</strong> Clearing your browser cache or switching devices will erase everything. Export your data regularly to keep it safe.</div>
+            </div>
             <div class="settings-row"><div class="settings-row-info"><div class="settings-row-title">Export Data</div><div class="settings-row-desc">Download all your data as a <code style="font-size:11px;color:var(--gold);">.voltage</code> file</div></div><button class="btn btn-secondary btn-sm" onclick="exportData()">⬇️ Export</button></div>
             <div class="settings-row"><div class="settings-row-info"><div class="settings-row-title">Import Data</div><div class="settings-row-desc">Restore from a <code style="font-size:11px;color:var(--gold);">.voltage</code> file</div></div><button class="btn btn-secondary btn-sm" onclick="importData()">⬆️ Import</button></div>
+          </div>
+          <div class="settings-section">
+            <div class="settings-section-title">Developer / Power User</div>
+            <div style="background:rgba(192,57,43,0.1);border:1px solid rgba(192,57,43,0.3);border-radius:var(--radius);padding:12px 16px;margin-bottom:12px;font-size:12.5px;color:var(--error-light);line-height:1.6;">
+              ⚠️ <strong>Warning:</strong> Disabling rate limits sends every request directly to OpenRouter with no cooldown or hourly cap. This can burn through your API quota extremely fast. Use with caution.
+            </div>
+            <div class="settings-row">
+              <div class="settings-row-info">
+                <div class="settings-row-title">Disable all rate limits</div>
+                <div class="settings-row-desc">Skip cooldown timers and send requests immediately</div>
+              </div>
+              <label class="toggle">
+                <input type="checkbox" id="toggleRateLimit" onchange="updateRateLimit()">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
           </div>
         </div>
       </div>
@@ -1093,6 +1115,100 @@
           <div><div class="section-title">🧮 Electrical Formula Sheet</div><div class="section-desc">Essential formulas for every IBEW apprentice — with worked examples for each.</div></div>
         </div>
         <div id="formulaSheetContent"></div>
+      </div>
+
+      <!-- ─── GUIDE ─── -->
+      <div id="page-guide" class="page-section">
+        <div style="text-align:center;padding:40px 24px 28px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);margin-bottom:24px;">
+          <div style="font-size:44px;margin-bottom:12px;text-shadow:0 0 8px rgba(201,168,76,0.8),0 0 16px rgba(201,168,76,0.4);">&#x26A1;</div>
+          <div class="section-title" style="font-size:24px;margin-bottom:8px;">Voltage Guide</div>
+          <div class="section-desc" style="font-size:14px;max-width:540px;margin:0 auto;">Everything you need to know to get the most out of your study sessions</div>
+        </div>
+        <div class="tab-bar">
+          <button class="tab-btn active" onclick="switchGuideTab('start',this)">&#x1F4D6; Getting Started</button>
+          <button class="tab-btn" onclick="switchGuideTab('tools',this)">&#x1F6E0;&#xFE0F; Study Tools</button>
+          <button class="tab-btn" onclick="switchGuideTab('api',this)">&#x1F511; API &amp; Usage</button>
+        </div>
+        <!-- Getting Started -->
+        <div class="tab-panel active" id="guide-panel-start">
+          <div class="card">
+            <div style="display:flex;flex-direction:column;gap:16px;">
+              <div style="display:flex;gap:14px;align-items:flex-start;"><div style="min-width:28px;height:28px;border-radius:50%;background:var(--gold);color:var(--navy);font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</div><div style="font-size:14px;color:var(--text);line-height:1.6;"><strong>Sign in with Google</strong></div></div>
+              <div style="display:flex;gap:14px;align-items:flex-start;"><div style="min-width:28px;height:28px;border-radius:50%;background:var(--gold);color:var(--navy);font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</div><div style="font-size:14px;color:var(--text);line-height:1.6;">Go to <strong>Settings</strong> and set your <strong>Apprentice Year</strong></div></div>
+              <div style="display:flex;gap:14px;align-items:flex-start;"><div style="min-width:28px;height:28px;border-radius:50%;background:var(--gold);color:var(--navy);font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">3</div><div style="font-size:14px;color:var(--text);line-height:1.6;">Upload study materials like PDFs, notes, or images <strong>OR</strong> jump straight to <strong>Study Topics</strong> to use the built-in question banks &mdash; <span style="color:var(--success-light);font-weight:600;">no API key needed</span></div></div>
+              <div style="display:flex;gap:14px;align-items:flex-start;"><div style="min-width:28px;height:28px;border-radius:50%;background:var(--gold);color:var(--navy);font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">4</div><div style="font-size:14px;color:var(--text);line-height:1.6;">To use AI features, get a free OpenRouter key first &mdash; see the <strong>API &amp; Usage</strong> tab above</div></div>
+              <div style="display:flex;gap:14px;align-items:flex-start;"><div style="min-width:28px;height:28px;border-radius:50%;background:var(--gold);color:var(--navy);font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">5</div><div style="font-size:14px;color:var(--text);line-height:1.6;">Hit <strong>Generate Quiz</strong> &mdash; AI builds custom questions from your uploaded content</div></div>
+              <div style="display:flex;gap:14px;align-items:flex-start;"><div style="min-width:28px;height:28px;border-radius:50%;background:var(--gold);color:var(--navy);font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">6</div><div style="font-size:14px;color:var(--text);line-height:1.6;">Review wrong answers after every session and use <strong>Re-Drill</strong> to drill weak spots</div></div>
+              <div style="display:flex;gap:14px;align-items:flex-start;"><div style="min-width:28px;height:28px;border-radius:50%;background:var(--gold);color:var(--navy);font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">7</div><div style="font-size:14px;color:var(--text);line-height:1.6;">Use the floating buttons (bottom right) for the <strong>timer</strong>, <strong>calculator</strong>, and <strong>AI chat</strong></div></div>
+            </div>
+          </div>
+        </div>
+        <!-- Study Tools -->
+        <div class="tab-panel" id="guide-panel-tools">
+          <div class="card">
+            <div style="display:flex;flex-direction:column;gap:0;">
+              <div style="display:grid;grid-template-columns:150px 1fr;gap:8px 16px;padding:11px 0;border-bottom:1px solid var(--border);align-items:start;"><div style="font-size:13px;font-weight:700;color:var(--gold);">Flashcards</div><div style="font-size:13px;color:var(--muted);line-height:1.5;">Flip card review, mark Known or Still Learning</div></div>
+              <div style="display:grid;grid-template-columns:150px 1fr;gap:8px 16px;padding:11px 0;border-bottom:1px solid var(--border);align-items:start;"><div style="font-size:13px;font-weight:700;color:var(--gold);">Wrong Answers</div><div style="font-size:13px;color:var(--muted);line-height:1.5;">Every missed question auto saved, re-drill anytime</div></div>
+              <div style="display:grid;grid-template-columns:150px 1fr;gap:8px 16px;padding:11px 0;border-bottom:1px solid var(--border);align-items:start;"><div style="font-size:13px;font-weight:700;color:var(--gold);">Notes</div><div style="font-size:13px;color:var(--muted);line-height:1.5;">Per-subject notepad, auto saves to your browser</div></div>
+              <div style="display:grid;grid-template-columns:150px 1fr;gap:8px 16px;padding:11px 0;border-bottom:1px solid var(--border);align-items:start;"><div style="font-size:13px;font-weight:700;color:var(--gold);">Progress</div><div style="font-size:13px;color:var(--muted);line-height:1.5;">Full score history, streak tracking, charts</div></div>
+              <div style="display:grid;grid-template-columns:150px 1fr;gap:8px 16px;padding:11px 0;border-bottom:1px solid var(--border);align-items:start;"><div style="font-size:13px;font-weight:700;color:var(--gold);">Bending Calc</div><div style="font-size:13px;color:var(--muted);line-height:1.5;">Stub up, offset, saddle, rolling offset with live results</div></div>
+              <div style="display:grid;grid-template-columns:150px 1fr;gap:8px 16px;padding:11px 0;border-bottom:1px solid var(--border);align-items:start;"><div style="font-size:13px;font-weight:700;color:var(--gold);">NEC Reference</div><div style="font-size:13px;color:var(--muted);line-height:1.5;">Most-tested articles with key points and code sections</div></div>
+              <div style="display:grid;grid-template-columns:150px 1fr;gap:8px 16px;padding:11px 0;border-bottom:1px solid var(--border);align-items:start;"><div style="font-size:13px;font-weight:700;color:var(--gold);">Wire Reference</div><div style="font-size:13px;color:var(--muted);line-height:1.5;">NEC Table 310.16 ampacity and conduit fill reference</div></div>
+              <div style="display:grid;grid-template-columns:150px 1fr;gap:8px 16px;padding:11px 0;border-bottom:1px solid var(--border);align-items:start;"><div style="font-size:13px;font-weight:700;color:var(--gold);">Formulas</div><div style="font-size:13px;color:var(--muted);line-height:1.5;">Complete formula sheet with worked examples</div></div>
+              <div style="display:grid;grid-template-columns:150px 1fr;gap:8px 16px;padding:11px 0;border-bottom:1px solid var(--border);align-items:start;"><div style="font-size:13px;font-weight:700;color:var(--gold);">Study Timer</div><div style="font-size:13px;color:var(--muted);line-height:1.5;">Pomodoro-style timer, bottom right corner</div></div>
+              <div style="display:grid;grid-template-columns:150px 1fr;gap:8px 16px;padding:11px 0;border-bottom:1px solid var(--border);align-items:start;"><div style="font-size:13px;font-weight:700;color:var(--gold);">Calculator</div><div style="font-size:13px;color:var(--muted);line-height:1.5;">Scientific calc plus Ohm&#39;s Law, power, voltage drop solvers</div></div>
+              <div style="display:grid;grid-template-columns:150px 1fr;gap:8px 16px;padding:11px 0;align-items:start;"><div style="font-size:13px;font-weight:700;color:var(--gold);">AI Assistant</div><div style="font-size:13px;color:var(--muted);line-height:1.5;">Subject-locked chat tutor, bottom right corner</div></div>
+            </div>
+          </div>
+        </div>
+        <!-- API & Usage -->
+        <div class="tab-panel" id="guide-panel-api">
+          <div class="card" style="margin-bottom:16px;">
+            <div class="card-title" style="margin-bottom:16px;">&#x1F511; Getting Your Free Key</div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div style="display:flex;gap:10px;align-items:flex-start;"><span style="color:var(--gold);font-weight:700;flex-shrink:0;">&rarr;</span><div style="font-size:13.5px;color:var(--text);line-height:1.5;">Go to <strong style="color:var(--gold);">openrouter.ai</strong> and sign up &mdash; no credit card needed</div></div>
+              <div style="display:flex;gap:10px;align-items:flex-start;"><span style="color:var(--gold);font-weight:700;flex-shrink:0;">&rarr;</span><div style="font-size:13.5px;color:var(--text);line-height:1.5;">Dashboard &rarr; API Keys &rarr; Create API Key &rarr; copy it</div></div>
+              <div style="display:flex;gap:10px;align-items:flex-start;"><span style="color:var(--gold);font-weight:700;flex-shrink:0;">&rarr;</span><div style="font-size:13.5px;color:var(--text);line-height:1.5;">Paste it into Voltage &rarr; <strong>Settings &rarr; OpenRouter API Key</strong>, or click the &#x2699;&#xFE0F; button in the top bar</div></div>
+            </div>
+          </div>
+          <div class="card" style="margin-bottom:16px;">
+            <div class="card-title" style="margin-bottom:14px;">&#x1F4CA; What Uses Your API Quota</div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);"><span style="font-size:13px;color:var(--text);">Generate Quiz from uploads</span><span class="badge badge-red">~1,500 tokens/quiz</span></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);"><span style="font-size:13px;color:var(--text);">AI Study Assistant chat</span><span class="badge badge-red">~400 tokens/message</span></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);"><span style="font-size:13px;color:var(--text);">Built-in question banks</span><span class="badge badge-green">100% free</span></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;"><span style="font-size:13px;color:var(--text);">All tools &amp; calculators</span><span class="badge badge-green">100% free</span></div>
+            </div>
+          </div>
+          <div class="card" style="margin-bottom:16px;">
+            <div class="card-title" style="margin-bottom:12px;">&#x26A1; Free Tier Limits on OpenRouter</div>
+            <div style="display:flex;flex-direction:column;gap:0;">
+              <div style="font-size:13px;color:var(--muted);padding:8px 0;border-bottom:1px solid var(--border);">&#x2022; Rate limited on free models during peak hours</div>
+              <div style="font-size:13px;color:var(--muted);padding:8px 0;border-bottom:1px solid var(--border);">&#x2022; If you get an error, just wait 2 minutes and retry</div>
+              <div style="font-size:13px;color:var(--muted);padding:8px 0;border-bottom:1px solid var(--border);">&#x2022; App automatically tries multiple free models if one is unavailable</div>
+              <div style="font-size:13px;color:var(--muted);padding:8px 0;">&#x2022; No daily hard cap but may slow down with heavy use</div>
+            </div>
+          </div>
+          <div class="card" style="margin-bottom:16px;">
+            <div class="card-title" style="margin-bottom:12px;">&#x26A0;&#xFE0F; Limitations to Know</div>
+            <div style="display:flex;flex-direction:column;gap:0;">
+              <div style="font-size:13px;color:var(--muted);padding:8px 0;border-bottom:1px solid var(--border);">&#x2022; PDF extraction works best on text-based PDFs, not scanned images</div>
+              <div style="font-size:13px;color:var(--muted);padding:8px 0;border-bottom:1px solid var(--border);">&#x2022; Max 6,000 characters of your upload is sent to AI per generation</div>
+              <div style="font-size:13px;color:var(--muted);padding:8px 0;border-bottom:1px solid var(--border);">&#x2022; AI chat is capped at 10 messages history to save tokens</div>
+              <div style="font-size:13px;color:var(--muted);padding:8px 0;border-bottom:1px solid var(--border);">&#x2022; All data lives in browser localStorage &mdash; clearing cache erases everything</div>
+              <div style="font-size:13px;color:var(--muted);padding:8px 0;">&#x2022; Export your data regularly via Settings &rarr; Export Data to back it up</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title" style="margin-bottom:12px;">&#x1F4A1; Tips to Save API Usage</div>
+            <div style="display:flex;flex-direction:column;gap:0;">
+              <div style="font-size:13px;color:var(--muted);padding:8px 0;border-bottom:1px solid var(--border);">&#x2022; Use built-in Study Topics question banks whenever possible</div>
+              <div style="font-size:13px;color:var(--muted);padding:8px 0;border-bottom:1px solid var(--border);">&#x2022; Only upload files when you have specific material to quiz from</div>
+              <div style="font-size:13px;color:var(--muted);padding:8px 0;border-bottom:1px solid var(--border);">&#x2022; Keep AI chat questions short and specific</div>
+              <div style="font-size:13px;color:var(--muted);padding:8px 0;">&#x2022; Enable rate limits in Settings to avoid burning through quota fast</div>
+            </div>
+          </div>
+        </div>
       </div>
 
     </div>
