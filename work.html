@@ -2100,9 +2100,20 @@ try {
     .replace(/,\s*}/g, '}')
     .replace(/,\s*\]/g, ']')
     .replace(/[\x00-\x1F\x7F]/g, ' ')
+    .replace(/\\'/g, "'")
+    .replace(/([{,]\s*)(\w+)(\s*:)/g, '$1"$2"$3')
+    .replace(/:\s*'([^']*)'/g, ': "$1"')
     .replace(/\n/g, ' ')
+    .replace(/\t/g, ' ')
+    .replace(/\r/g, '')
     .trim();
-  return JSON.parse(cleaned);
+  try {
+    return JSON.parse(cleaned);
+  } catch(e2) {
+    const match2 = cleaned.match(/\[.*\]/s);
+    if (match2) return JSON.parse(match2[0]);
+    throw new Error('AI returned malformed JSON — try generating again');
+  }
 }    } catch (err) {
       lastError = err;
       console.warn(`Model ${model} failed:`, err.message);
