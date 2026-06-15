@@ -2090,7 +2090,8 @@ const prompt = `You are an IBEW electrical exam question writer. Generate exactl
       }
       const text = data.choices?.[0]?.message?.content || '';
       if (!text.trim()) throw new Error('Empty response from model');
-const jsonMatch = text.match(/\[[\s\S]*\]/);
+const cleaned_text = text.replace(/```json/g, '').replace(/```/g, '').trim();
+const jsonMatch = cleaned_text.match(/\[[\s\S]*\]/);      
 if (!jsonMatch) throw new Error('Could not parse AI response');
 try {
   return JSON.parse(jsonMatch[0]);
